@@ -6,8 +6,6 @@ from database import session
 from dotenv import load_dotenv
 import os
 
-print (os.getenv("SUPABASE_URI"))
-
 load_dotenv()
 
 app = Flask(__name__)
