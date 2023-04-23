@@ -1,5 +1,7 @@
 from supabase import create_client
-from sqlalchemy import Table, Column, Integer, String
+from sqlalchemy import Table, Column, Integer, String, DATETIME, create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.dialects.postgresql import INTEGER, TEXT, VARCHAR
 from models import Base, Users, Resumes, CommentsAndRatings, UserToken
 from dotenv import load_dotenv
 import os
@@ -8,12 +10,19 @@ load_dotenv()
 
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_KEY")
+supabase_uri = os.getenv("SUPABASE_URI")
 supabase_client = create_client(supabase_url, supabase_key)
 
-models = [Users, Resumes, CommentsAndRatings, UserToken]
+engine = create_engine(supabase_uri)
+Base.metadata.create_all(engine)
 
-for model in models:
+Session = sessionmaker(bind=engine)
+session = Session()
+
+for model in [Users, Resumes, CommentsAndRatings, UserToken]:
+    columns = []
+    for col_name, col_type in model.__table__.columns.items():
+        column_type = str(col_type.type)
+        column_type = eval(column_type)
+        columns.append(Column(col_name, column_type))
     table_name = model.__tablename__
-    columns = [Column(col_name, col_type) for col_name, col_type in model.__table__.columns.items()]
-    table = Table(table_name, Base.metadata, *columns)
-    table.create(supabase_client.engine)

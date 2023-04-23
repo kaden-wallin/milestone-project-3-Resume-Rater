@@ -1,13 +1,19 @@
 from flask import Flask, jsonify, request
-from backend.models import Users
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from models import Users
 from database import session
 from dotenv import load_dotenv
 import os
+
+print (os.getenv("SUPABASE_URI"))
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SUPABASE_URI")
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 @app.route('/api/data')
 def get_data():

@@ -1,4 +1,4 @@
-from sqlalchemy import CheckConstraint, Column, Integer, String, Text, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime, timedelta
@@ -42,6 +42,6 @@ class UserToken(Base):
     token_id = Column(Integer, primary_key=True)
     token = Column(String(80), unique=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    expires_at = Column(DateTime, nullable=False, default=datetime.utcnow + timedelta(days=1))
+    expires_at = Column(DateTime, nullable=False, default=datetime.utcnow() + timedelta(days=1))
     user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
     user = relationship('Users', backref='user_token')
