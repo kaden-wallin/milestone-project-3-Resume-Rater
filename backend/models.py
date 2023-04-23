@@ -17,6 +17,14 @@ class Users(Base):
     def __repr__(self):
         return '<User %r>' % self.username
     
+class Passwords(Base):
+    __tablename__ = 'passwords'
+    
+    password_id = Column(Integer, primary_key=True)
+    password = Column(Text)
+    user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
+    user = relationship('Users', backref='passwords')
+    
 class Resumes(Base):
     __tablename__ = 'resumes'
 

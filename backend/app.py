@@ -7,19 +7,17 @@ from database import session
 from dotenv import load_dotenv
 import os
 
-
 load_dotenv()
 
 # Configuration
 app = Flask(__name__)
-app.secret_key = 'kpQxRQainj'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SUPABASE_URI")
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-@app.route('/api/data')
+@app.route('/api/users')
 def get_data():
-    users = session.query(Users).all()
-    data = {'users': [users.username for user in users]}
-    return jsonify(data)
+        users = session.query(Users).all()
+        data = {'username': users[0].username, 'email' : users[0].email}
+        return jsonify(data)
     
