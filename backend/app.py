@@ -1,3 +1,4 @@
+# Imports
 from flask import Flask, jsonify, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -6,9 +7,12 @@ from database import session
 from dotenv import load_dotenv
 import os
 
+
 load_dotenv()
 
+# Configuration
 app = Flask(__name__)
+app.secret_key = 'kpQxRQainj'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SUPABASE_URI")
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

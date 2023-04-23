@@ -1,8 +1,10 @@
+# Imports
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime, timedelta
 
+# Models For Database
 Base = declarative_base()
 
 class Users(Base):
