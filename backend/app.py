@@ -1,17 +1,23 @@
+# Imports
 from flask import Flask, jsonify, request
-from supabase import create_client
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from models import Users
+from database import session
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+# Configuration
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SUPABASE_URI")
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-supabase_url = 'https://osdspxwxczwrzekvdjuc.supabase.co'
-supabase_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zZHNweHd4Y3p3cnpla3ZkanVjIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODIxMzUzMDksImV4cCI6MTk5NzcxMTMwOX0.MYO-qLqZOh9bmVpeK3ZDi03TAJ31Z6R1TtrpJmZgnbE'
-
-supabase_client = create_client(supabase_url, supabase_key)
-
-@app.route('/api/data')
+@app.route('/api/users')
 def get_data():
-    data = {'name': 'John Doe', 'age': 30}
-    if request.method == 'GET':
+        users = session.query(Users).all()
+        data = {'username': users[0].username, 'email' : users[0].email}
         return jsonify(data)
     
-result = supabase_client.from_('comments').select('*').execute()
