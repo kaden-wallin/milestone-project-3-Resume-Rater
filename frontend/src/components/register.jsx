@@ -19,6 +19,7 @@ const RegisterForm = ({ setUser }) => {
           });
       
           setUser(response.data.user);
+          navigate('/')
         } catch (error) {
           console.error(error);
         }

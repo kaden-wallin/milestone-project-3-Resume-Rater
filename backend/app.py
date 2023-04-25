@@ -1,57 +1,105 @@
 # Imports
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
+from flask import Flask, jsonify, request, redirect, url_for
+from flask_migrate import Migrate
+from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
+from models import Users, Passwords, UserToken
+from database import session
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import secrets
+import os
+import bcrypt
+import json
 
-# Models For Database
-Base = declarative_base()
+load_dotenv()
 
-class Users(Base):
-    __tablename__ = 'users'
+# Configuration
+app = Flask(__name__)
+CORS(app, origins=['http://localhost:3000'])
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SUPABASE_URI")
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-    user_id = Column(Integer, primary_key=True)
-    username = Column(String(80), unique=True, nullable=False)
-    email = Column(String(120), unique=True, nullable=False)
+# Login Configuration
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
-    def __repr__(self):
-        return '<User %r>' % self.username
-    
-class Passwords(Base):
-    __tablename__ = 'passwords'
-    
-    password_id = Column(Integer, primary_key=True)
-    password = Column(Text)
-    user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
-    user = relationship('Users', backref='passwords')
+@login_manager.user_loader
+def load_user(user_id):
+    return session.query(Users).get(int(user_id))
 
-class UserToken(Base):
-    __tablename__ = 'user_tokens'
+# Routes
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
 
-    token_id = Column(Integer, primary_key=True)
-    token = Column(String(80), unique=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    expires_at = Column(DateTime, nullable=False, default=datetime.utcnow() + timedelta(days=1))
-    user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
-    user = relationship('Users', backref='user_token')
+    if 'username' not in data or 'email' not in data or 'password' not in data:
+        return jsonify({'error': 'Missing required fields'}), 400
 
-class Resumes(Base):
-    __tablename__ = 'resumes'
+    if not isinstance(data['username'], str) or not isinstance(data['email'], str) or not isinstance(data['password'], str):
+        return jsonify({'error': 'Invalid field types'}), 400
 
-    resume_id = Column(Integer, primary_key=True)
-    resume = Column(Text)
-    user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
-    user = relationship('Users', backref='resumes')
-    
-    
-class CommentsAndRatings(Base):
-    __tablename__ = 'comments_and_ratings'
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
 
-    c_and_r_id = Column(Integer, primary_key=True)
-    comment = Column(Text)
-    rating = Column(Integer, nullable=True, default=0,
-                        info={'check_constraint': 'rating >= 1 AND rating <= 5'})
-    user_id_fkey = Column(Integer, ForeignKey('users.user_id'), nullable=True)
-    resume_id_fkey = Column(Integer, ForeignKey('resumes.resume_id'), nullable=False)
-    user = relationship('Users', backref='comments_and_ratings')
-    resume = relationship('Resumes', backref='comments_and_ratings')
+    if session.query(Users).filter_by(email=email).first() is not None:
+        return jsonify({'error': 'Email address already in use'}), 400
+
+    user = Users(username=username, email=email)
+    session.add(user)
+    session.commit()
+
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    passwords = Passwords(password=hashed_password, user_id_fkey=user.user_id)
+    session.add(passwords)
+
+    token = UserToken(user=user, token=secrets.token_urlsafe())
+    session.add(token)
+
+    session.commit()
+
+    return jsonify({'user': user.__dict__()})
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password_str = data.get('password')
+
+    user = session.query(Users).filter_by(email=email).first()
+    print(user)
+
+    if user:
+        password_obj = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first()
+        print(password_obj)
+
+    if password_obj:
+        password = password_obj.password
+    else:
+        return jsonify({'error': 'Invalid email or password'}), 401
+
+    if password and bcrypt.checkpw(password_str.encode('utf-8'), password.encode('utf-8')):
+        user_token = user.user_token
+
+        if user_token.expires_at < datetime.utcnow():
+            return jsonify({'error': 'Token has expired'}), 401
+
+        login_user(user)
+
+        return jsonify({'token': user_token.token, 'expires_at': user_token.expires_at})
+
+    return jsonify({'error': 'Invalid email or password'}), 401
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+if __name__ == '__main__':
+    app.run(debug=True)

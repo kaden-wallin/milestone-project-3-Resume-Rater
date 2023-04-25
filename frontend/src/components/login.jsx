@@ -9,8 +9,13 @@ const LoginForm = ({ setUser }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
+        
         try {
-            const response = await axios.post('/login', { email, password })
+            const response = await axios.post("http://localhost:5000/login", {
+                email,
+                password
+            })
+
             setUser(response.data.user)
             navigate('/')
         } catch (error) {
@@ -33,6 +38,7 @@ const LoginForm = ({ setUser }) => {
             <input
                 type="email"
                 name="email"
+                autoComplete="email"
                 required
                 onChange={(event) => setEmail(event.target.value)}
             />
@@ -40,6 +46,7 @@ const LoginForm = ({ setUser }) => {
             <input
                 type="password"
                 name="password"
+                autoComplete="current-password"
                 required
                 onChange={(event) => setPassword(event.target.value)}
             />
