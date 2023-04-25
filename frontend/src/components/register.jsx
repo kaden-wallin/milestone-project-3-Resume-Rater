@@ -12,15 +12,10 @@ const RegisterForm = ({ setUser }) => {
         event.preventDefault();
       
         try {
-          const passwordResponse = await axios.post(
-            "http://localhost:5000/passwords",
-            { password }
-          );
-      
-          const response = await axios.post("http://localhost:5000/users", {
+          const response = await axios.post("http://localhost:5000/register", {
             username,
             email,
-            password_id: passwordResponse.data.id,
+            password,
           });
       
           setUser(response.data.user);
@@ -51,13 +46,16 @@ const RegisterForm = ({ setUser }) => {
             <input
                 type="email"
                 name="email"
+                autoComplete="email"
                 required
                 onChange={(event) => setEmail(event.target.value)}
             />
             <label htmlFor="password">Password</label>
             <input
-                type="textarea"
+                type="password"
                 name="password"
+                minLength="8"
+                autoComplete="current-password"
                 required
                 onChange={(event) => setPassword(event.target.value)}
             />
