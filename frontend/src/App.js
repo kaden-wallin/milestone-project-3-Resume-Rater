@@ -1,38 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { Routes, Route } from 'react-router-dom'
+import LoginForm from './components/login';
+import RegisterForm from './components/register';
+import Index from './components/front';
 
-const getData = async () => {
-  const response = await axios.get('/api/users');
-  return response.data;
-};
+function App() {
+    return (
+        <Routes>
+            <Route path='/' element={<Index />} />
+            <Route path='/login' element={<LoginForm />} />
+            <Route path='/register' element={<RegisterForm />} />
+        </Routes>
+     )
+}
 
-const App = () => {
-  const [data, setData] = useState({});
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getData();
-        console.log(result)
-        setData(result);
-      } catch (error) {
-        setError('Error retrieving data');
-      }
-    };
-    fetchData();
-  }, []);
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  return (
-    <div>
-      <h1>Hello, {data.username}!</h1>
-      <p>Is this your email? {data.email}</p>
-    </div>
-  );
-};
-
-export default App;
+export default App
