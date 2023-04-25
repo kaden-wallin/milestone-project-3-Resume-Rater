@@ -1,7 +1,7 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
 
-const Index = () => {
+const Home = () => {
   const navigate = useNavigate()
 
   const handleLogin = () => {
@@ -23,4 +23,4 @@ const Index = () => {
   );
 };
 
-export default Index
+export default Home
