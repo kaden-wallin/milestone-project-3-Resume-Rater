@@ -24,7 +24,17 @@ class Passwords(Base):
     password = Column(Text)
     user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
     user = relationship('Users', backref='passwords')
-    
+
+class UserToken(Base):
+    __tablename__ = 'user_tokens'
+
+    token_id = Column(Integer, primary_key=True)
+    token = Column(String(80), unique=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False, default=datetime.utcnow() + timedelta(days=1))
+    user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
+    user = relationship('Users', backref='user_token')
+
 class Resumes(Base):
     __tablename__ = 'resumes'
 
@@ -45,13 +55,3 @@ class CommentsAndRatings(Base):
     resume_id_fkey = Column(Integer, ForeignKey('resumes.resume_id'), nullable=False)
     user = relationship('Users', backref='comments_and_ratings')
     resume = relationship('Resumes', backref='comments_and_ratings')
-
-class UserToken(Base):
-    __tablename__ = 'user_tokens'
-
-    token_id = Column(Integer, primary_key=True)
-    token = Column(String(80), unique=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    expires_at = Column(DateTime, nullable=False, default=datetime.utcnow() + timedelta(days=1))
-    user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
-    user = relationship('Users', backref='user_token')
