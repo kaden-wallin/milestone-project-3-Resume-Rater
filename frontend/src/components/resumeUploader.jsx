@@ -28,6 +28,10 @@ const ResumeUploader = ({ user })  => {
         }
     }
 
+    const home = () => {
+        navigate('/')
+    }
+
     return (
         <form onSubmit={handleSubmit}>
             <Dropzone onDrop={handleFileDrop}>
@@ -39,6 +43,7 @@ const ResumeUploader = ({ user })  => {
                 )}
             </Dropzone>
             <button type='submit' disabled={!file}>Upload Resume</button>
+            <button onClick={home}>Back</button>
         </form>
     )
 }

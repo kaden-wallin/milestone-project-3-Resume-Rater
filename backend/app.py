@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import secrets
 import os
-import bcrypt
+import argon2
 import json
 
 load_dotenv()
@@ -22,6 +22,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SUPABASE_URI")
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+argon2_hasher = argon2.PasswordHasher()
 
 # Login Configuration
 login_manager = LoginManager()
@@ -54,8 +56,7 @@ def register():
     session.add(user)
     session.commit()
 
-    salt = bcrypt.gensalt(rounds=12)
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    hashed_password = argon2_hasher.hash(password)
     passwords = Passwords(password=hashed_password, user_id_fkey=user.user_id)
     session.add(passwords)
 
@@ -77,19 +78,17 @@ def login():
     password_str = data.get('password')
 
     user = session.query(Users).filter_by(email=email).first()
-    print(user)
 
+    password_obj = None
     if user:
         password_obj = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first()
-        print(password_obj)
-
-    if password_obj:
-        password = password_obj.password
-    else:
-        return jsonify({'error': 'Invalid email or password'}), 401
-
-    if password and bcrypt.checkpw(password_str.encode('utf-8'), password.encode('utf-8')):
+        
+    if password_obj is not None and argon2_hasher.verify(password_str, password_obj.password):
         user_token = user.user_token
+        if user_token is None:
+            user_token = UserToken(user=user, token=secrets.token_urlsafe())
+            session.add(user_token)
+            session.commit()
 
         if user_token.expires_at < datetime.utcnow():
             return jsonify({'error': 'Token has expired'}), 401
@@ -117,4 +116,4 @@ def upload_resume():
     return jsonify({'message': 'Resume uploaded successfully'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
