@@ -12,6 +12,7 @@ import secrets
 import os
 import argon2
 import json
+import base64
 
 load_dotenv()
 
@@ -32,7 +33,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return session.query(Users).get(int(user_id))
+    return Users.query.get(int(user_id))
 
 # Routes
 @app.route('/register', methods=['POST'])
@@ -57,7 +58,8 @@ def register():
     session.commit()
 
     hashed_password = argon2_hasher.hash(password)
-    passwords = Passwords(password=hashed_password, user_id_fkey=user.user_id)
+    encoded_password = base64.b64encode(hashed_password.encode('utf-8')).decode('utf-8')
+    passwords = Passwords(password=encoded_password, user_id_fkey=user.user_id)
     session.add(passwords)
 
     token = UserToken(user=user, token=secrets.token_urlsafe())
@@ -74,30 +76,32 @@ def register():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+
+    if 'email' not in data or 'password' not in data:
+        return jsonify({'error': 'Missing required fields'}), 400
+
     email = data.get('email')
-    password_str = data.get('password')
+    password = data.get('password')
 
     user = session.query(Users).filter_by(email=email).first()
 
-    password_obj = None
-    if user:
-        password_obj = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first()
-        
-    if password_obj is not None and argon2_hasher.verify(password_str, password_obj.password):
-        user_token = user.user_token
-        if user_token is None:
-            user_token = UserToken(user=user, token=secrets.token_urlsafe())
-            session.add(user_token)
-            session.commit()
+    if user is None:
+        return jsonify({'error': 'Invalid email or password'}), 401
 
-        if user_token.expires_at < datetime.utcnow():
-            return jsonify({'error': 'Token has expired'}), 401
+    encoded_password = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first().password
+    decoded_password = base64.b64decode(encoded_password.encode('utf-8')).decode('utf-8')
 
-        login_user(user)
+    try:
+        argon2_hasher.verify(decoded_password, password)
+    except argon2.exceptions.VerifyMismatchError:
+        return jsonify({'error': 'Invalid email or password'}), 401
 
-        return jsonify({'token': user_token.token, 'expires_at': user_token.expires_at})
-
-    return jsonify({'error': 'Invalid email or password'}), 401
+    login_user(user)
+    return jsonify({'user': {
+        'user_id': user.user_id,
+        'username': user.username,
+        'email': user.email
+    }})
 
 @app.route('/logout')
 @login_required
@@ -116,4 +120,4 @@ def upload_resume():
     return jsonify({'message': 'Resume uploaded successfully'})
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run()

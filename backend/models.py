@@ -14,8 +14,11 @@ class Users(Base):
     username = Column(String(80), unique=True, nullable=False)
     email = Column(String(120), unique=True, nullable=False)
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+    def is_active(self):
+        return True
+    
+    def get_id(self):
+        return self.user_id
     
 class Passwords(Base):
     __tablename__ = 'passwords'
