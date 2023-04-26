@@ -1,18 +1,23 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState } from 'react'
 import Home from './components/home';
 import LoginForm from './components/login';
 import RegisterForm from './components/register';
+import ResumeUploader from './components/resumeUploader';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/register" element={<RegisterForm />} />
-      </Routes>
-    </BrowserRouter>
-  );
+    const [user, setUser] = useState(null)
+
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home user={user} />} />
+                <Route path="/login" element={<LoginForm setUser={setUser} />} />
+                <Route path="/register" element={<RegisterForm setUser={setUser} />} />
+                <Route path="/resume-uploader" element={<ResumeUploader user={user} />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App

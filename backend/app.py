@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-from models import Users, Passwords, UserToken
+from models import Users, Passwords, UserToken, Resumes
 from database import session
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -54,7 +54,8 @@ def register():
     session.add(user)
     session.commit()
 
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    salt = bcrypt.gensalt(rounds=12)
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     passwords = Passwords(password=hashed_password, user_id_fkey=user.user_id)
     session.add(passwords)
 
@@ -63,7 +64,11 @@ def register():
 
     session.commit()
 
-    return jsonify({'user': user.__dict__()})
+    return jsonify({'user': {
+        'user_id': user.user_id,
+        'username': user.username,
+        'email': user.email
+    }})
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -100,6 +105,16 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/upload-resume', methods=['POST'])
+@login_required
+def upload_resume():
+    file = request.files['resume']
+    user_id = current_user.user_id
+    resume = Resumes(resume=file.read(), user_id_fkey=user_id)
+    session.add(resume)
+    session.commit()
+    return jsonify({'message': 'Resume uploaded successfully'})
 
 if __name__ == '__main__':
     app.run(debug=True)
