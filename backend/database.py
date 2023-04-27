@@ -2,7 +2,7 @@
 from supabase import create_client
 from sqlalchemy import Table, Column, Integer, String, DATETIME, create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.dialects.postgresql import INTEGER, TEXT, VARCHAR
+from sqlalchemy.dialects.postgresql import BYTEA, INTEGER, TEXT, VARCHAR
 from models import Base, Users, Resumes, CommentsAndRatings, UserToken
 from dotenv import load_dotenv
 import os

@@ -17,6 +17,7 @@ const LoginForm = ({ setUser }) => {
             })
 
             setUser(response.data.user)
+            localStorage.setItem('token', response.data.user.token)
             navigate('/')
         } catch (error) {
             console.error(error)

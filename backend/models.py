@@ -1,13 +1,14 @@
 # Imports
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects.postgresql import BYTEA
+from sqlalchemy.orm import relationship, declarative_base
 from datetime import datetime, timedelta
+from flask_login import UserMixin
 
 # Models For Database
 Base = declarative_base()
 
-class Users(Base):
+class Users(Base, UserMixin):
     __tablename__ = 'users'
 
     user_id = Column(Integer, primary_key=True)
@@ -19,6 +20,9 @@ class Users(Base):
     
     def get_id(self):
         return self.user_id
+    
+    def is_authenticated(self):
+        return True
     
 class Passwords(Base):
     __tablename__ = 'passwords'
@@ -42,7 +46,7 @@ class Resumes(Base):
     __tablename__ = 'resumes'
 
     resume_id = Column(Integer, primary_key=True)
-    resume = Column(Text)
+    resume = Column(BYTEA)
     user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
     user = relationship('Users', backref='resumes')
     

@@ -19,7 +19,10 @@ const ResumeUploader = ({ user })  => {
 
         try {
             const response = await axios.post("http://localhost:5000/upload-resume", formData, {
-                headers: { 'Content-Type': 'mulipart/form-data' }
+                headers: { 
+                'Content-Type': 'mulipart/form-data',
+                'Authorization' : `Bearer ${localStorage.getItem('token')}` 
+                }
             })
             console.log(response.data)
             navigate('/')
@@ -34,11 +37,13 @@ const ResumeUploader = ({ user })  => {
 
     return (
         <form onSubmit={handleSubmit}>
+            <h1>Upload a Resume</h1>
             <Dropzone onDrop={handleFileDrop}>
                 {({ getRootProps, getInputProps }) => (
                     <div {...getRootProps()}>
                         <input {...getInputProps()} />
                         <p>Drag and drop a your resume file here or click to select a file</p>
+                        {file && <p>Selected file: {file.name}</p>}
                     </div>
                 )}
             </Dropzone>
