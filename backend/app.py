@@ -3,7 +3,6 @@ from flask import Flask, make_response, jsonify, request, redirect, url_for
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from models import Users, Passwords, UserToken, Resumes, CommentsAndRatings
 from database import session
 from datetime import datetime, timedelta
@@ -12,7 +11,6 @@ from functools import wraps
 import secrets
 import os
 import argon2
-import jwt
 import base64
 
 load_dotenv()
@@ -27,45 +25,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 argon2_hasher = argon2.PasswordHasher()
-
-# Login Configuration
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-
-def load_user(user_id):
-    if user_id:
-        user = Users.query.get(int(user_id))
-        if user:
-            return user
-    
-    encoded_token = request.headers.get('Authorization')
-    if encoded_token:
-        try:
-            token = jwt.decode(encoded_token, secret_key, algorithms=['HS256'])
-            user = Users.query.get(token['user_id'])
-            if user:
-                return user
-        except:
-            pass
-    
-    return None
-
-def jwt_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        encoded_token = request.headers.get('Authorization')
-        if not encoded_token:
-            return jsonify({'error': 'Missing authorization token'}), 401
-        try:
-            token = jwt.decode(encoded_token, secret_key, algorithms=['HS256'])
-            current_user = Users.query.get(token['user_id'])
-            if not current_user:
-                return jsonify({'error': 'Invalid token'}), 401
-            return f(current_user=current_user, *args, **kwargs)
-        except:
-            return jsonify({'error': 'Invalid token'}), 401
-    return decorated_function
 
 def allowed_file(filename, allowed_extensions):
     return '.' in filename and \
@@ -103,7 +62,6 @@ def register():
 
     session.commit()
     
-    token = jwt.encode({'user_id': user.user_id}, secret_key, algorithm='HS256')
     return jsonify({'user': {
         'user_id': user.user_id,
         'username': user.username,
@@ -134,13 +92,10 @@ def login():
     except argon2.exceptions.VerifyMismatchError:
         return jsonify({'error': 'Invalid email or password'}), 401
 
-    login_user(user)
-
     token = UserToken(user=user, token=secrets.token_urlsafe(), expires_at=datetime.utcnow() + timedelta(hours=1))
     session.add(token)
     session.commit()
 
-    token = jwt.encode({'user_id': user.user_id}, secret_key, algorithm='HS256')
     response = jsonify({'user': {
         'user_id': user.user_id,
         'username': user.username,
@@ -152,16 +107,13 @@ def login():
     return response
 
 @app.route('/logout')
-@login_required
 def logout():
     response = make_response(jsonify({'message': 'Logged out successfully'}))
     response.set_cookie('token', '', expires=0)
     response.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
-    logout_user()
     return response
 
 @app.route('/upload-resume', methods=['POST'])
-@jwt_required
 def upload_resume(current_user):
     if 'resume' not in request.files:
         return jsonify({'error': 'No file in request'}), 400

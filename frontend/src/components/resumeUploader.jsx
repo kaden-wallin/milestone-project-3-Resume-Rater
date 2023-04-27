@@ -19,10 +19,7 @@ const ResumeUploader = ({ user })  => {
 
         try {
             const response = await axios.post("http://localhost:5000/upload-resume", formData, {
-                headers: { 
-                'Content-Type': 'mulipart/form-data',
-                'Authorization' : `Bearer ${localStorage.getItem('token')}` 
-                }
+                headers: { 'Content-Type': 'mulipart/form-data' }
             })
             console.log(response.data)
             navigate('/')

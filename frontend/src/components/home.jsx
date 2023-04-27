@@ -18,7 +18,6 @@ const Home = ({ user, setUser }) => {
 
     const handleLogout = () => {
         setUser(null)
-        localStorage.removeItem('user')
     }
 
     return (
