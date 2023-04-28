@@ -1,5 +1,6 @@
 # Imports
-from flask import Flask, make_response, jsonify, request, redirect, url_for
+from io import BytesIO
+from flask import Flask, make_response, jsonify, request, redirect, send_file, url_for
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -58,10 +59,6 @@ def register():
         return jsonify({'error': 'Email address already in use'}), 400
 
     hashed = generate_password_hash(password)
-    if check_password_hash(hashed, password):
-        print("It Matches!", hashed)
-    else:
-        print("It doesn't Match")
     user = Users(username=username, email=email)
     session.add(user)
     session.commit()
@@ -101,7 +98,6 @@ def login():
     password_data = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first()
 
     hashed_password = password_data.password
-    print(hashed_password)
 
     if check_password_hash(hashed_password, password):
         access_token = create_access_token(identity=user.user_id)
@@ -142,70 +138,38 @@ def upload_resume(current_user):
     if not allowed_file(resume_file.filename, allowed_extensions):
         return jsonify({'error': 'Invalid file type'}), 400
 
-    # Create a new instance of the Resumes model and set its attributes
     resume = Resumes()
     resume.user_id_fkey = current_user.user_id
-    resume.uploaded_at = datetime.utcnow()
     resume.filename = f"{current_user.user_id}_resume_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{resume_file.filename}"
     resume.content_type = resume_file.content_type
-    resume.file_data = resume_file.read()
+    resume.resume = resume_file.read()
 
     session.add(resume)
     session.commit()
 
     return jsonify({'success': 'Resume uploaded successfully'}), 200
 
-@app.route('/search', methods=['GET'])
-def search_resumes():
-    term = request.args.get('term')
+@app.route('/resumes', methods=['GET'])
+@token_required
+def get_resumes(current_user):
+    resumes = session.query(Resumes).filter_by(user_id_fkey=current_user.user_id).all()
 
-    if not term:
-        return jsonify({'error': 'Missing search term'}), 400
+    resume_list = []
+    for resume in resumes:
+        resume_dict = {
+            'resume_id': resume.resume_id,
+            'filename': resume.filename,
+            'resume': resume.resume,
+        }
+        resume_list.append(resume_dict)
 
-    search_results = Resumes.query.filter(Resumes.resume.ilike(f'%{term}%')).all()
-
-    return jsonify([{'resume_id': resume.resume_id, 'resume': resume.resume} for resume in search_results])
+    return jsonify({'resumes': resume_list})
 
 @app.route('/resumes/<int:resume_id>', methods=['GET'])
-def get_resume(resume_id):
-    resume = Resumes.query.filter_by(resume_id=resume_id).first()
+def get_resume(current_user, resume_id):
+    resume = session.query(Resumes).filter_by(resume_id=resume_id, user_id_fkey=current_user.user_id).first()
 
     if not resume:
         return jsonify({'error': 'Resume not found'}), 404
 
-    return make_response(resume.resume, {'Content-Type': 'application/pdf'})
-
-@app.route('/resumes/<int:resume_id>/comments', methods=['GET'])
-def get_resume_comments(resume_id):
-    comments = CommentsAndRatings.query.filter_by(resume_id_fkey=resume_id).with_entities(CommentsAndRatings.comment).all()
-    comments_list = [c[0] for c in comments]
-    return jsonify({'comments': comments_list}), 200
-
-@app.route('/resumes/<int:resume_id>/ratings', methods=['GET'])
-def get_resume_ratings(resume_id):
-    ratings = CommentsAndRatings.query.filter_by(resume_id_fkey=resume_id).with_entities(CommentsAndRatings.rating).all()
-    ratings_list = [r[0] for r in ratings]
-    return jsonify({'ratings': ratings_list}), 200
-
-@app.route('/resumes/<int:resume_id>/feedback', methods=['POST'])
-def add_comment_and_rating(resume_id):
-    comment = request.json.get('comment')
-    rating = request.json.get('rating')
-
-    new_c_and_r = CommentsAndRatings(comment=comment, rating=rating, resume_id_fkey=resume_id)
-    session.add(new_c_and_r)
-    session.commit()
-
-    return jsonify({'success': True}), 201
-
-@app.route('/resumes/<int:resume_id>/feedback', methods=['GET'])
-def get_comments_and_ratings(resume_id):
-
-    c_and_rs = CommentsAndRatings.query.filter_by(resume_id_fkey=resume_id).all()
-
-    c_and_rs_list = [{'comment': c_and_r.comment, 'rating': c_and_r.rating} for c_and_r in c_and_rs]
-
-    return jsonify(c_and_rs_list), 200
-
-if __name__ == '__main__':
-    app.run()
+    return send_file(BytesIO(resume.file_data), attachment_filename=resume.filename, mimetype=resume.content_type)
