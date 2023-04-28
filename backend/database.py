@@ -3,7 +3,7 @@ from supabase import create_client
 from sqlalchemy import Table, Column, Integer, String, DATETIME, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.dialects.postgresql import BYTEA, INTEGER, TEXT, VARCHAR
-from models import Base, Users, Resumes, CommentsAndRatings, UserToken
+from models import Base, Users, Resumes, CommentsAndRatings
 from dotenv import load_dotenv
 import os
 
@@ -23,7 +23,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Database Migration
-for model in [Users, Resumes, CommentsAndRatings, UserToken]:
+for model in [Users, Resumes, CommentsAndRatings]:
     columns = []
     for col_name, col_type in model.__table__.columns.items():
         column_type = str(col_type.type)

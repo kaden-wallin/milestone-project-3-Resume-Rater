@@ -18,12 +18,14 @@ const Home = ({ user, setUser }) => {
 
     const handleLogout = () => {
         setUser(null)
-        localStorage.removeItem('user')
+        localStorage.removeItem("access_token")
     }
+
+    const isAuthenticated = user && localStorage.getItem("access_token")
 
     return (
         <>
-            {user ? (
+            {isAuthenticated ? (
             <div>
                 <h1>Welcome to Rotten Resumes</h1>
                 <div>
