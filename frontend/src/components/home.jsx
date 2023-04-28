@@ -1,5 +1,6 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
+import setAuthToken from './setAuthToken'
 
 const Home = ({ user, setUser }) => {
     const navigate = useNavigate()
@@ -20,6 +21,10 @@ const Home = ({ user, setUser }) => {
         setUser(null)
         localStorage.removeItem("access_token")
     }
+
+    window.addEventListener('load', () => {
+        setAuthToken(localStorage.getItem('access_token'))
+    })
 
     const isAuthenticated = user && localStorage.getItem("access_token")
 
