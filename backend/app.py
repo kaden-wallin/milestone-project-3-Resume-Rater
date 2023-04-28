@@ -9,10 +9,10 @@ from database import session
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
 import os
-import argon2
-import base64
+
 
 load_dotenv()
 
@@ -24,8 +24,6 @@ app.config['JWT_SECRET_KEY'] = os.getenv("SECRET_KEY")
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
-argon2_hasher = argon2.PasswordHasher()
 
 def allowed_file(filename, allowed_extensions):
     return '.' in filename and \
@@ -59,13 +57,16 @@ def register():
     if session.query(Users).filter_by(email=email).first() is not None:
         return jsonify({'error': 'Email address already in use'}), 400
 
-    salt = secrets.token_hex(16)
-    hashed_password = argon2.hash(password + salt)
+    hashed = generate_password_hash(password)
+    if check_password_hash(hashed, password):
+        print("It Matches!", hashed)
+    else:
+        print("It doesn't Match")
     user = Users(username=username, email=email)
     session.add(user)
     session.commit()
 
-    password = Passwords(salt=salt, password=hashed_password, user_id_fkey=user.user_id)
+    password = Passwords(password=hashed, user_id_fkey=user.user_id)
     session.add(password)
     
     session.commit()
@@ -98,10 +99,11 @@ def login():
         return jsonify({'error': 'Invalid email or password'}), 401
 
     password_data = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first()
-    salt = password_data.salt
-    hashed_password = password_data.password
 
-    if argon2.verify(password + salt, hashed_password):
+    hashed_password = password_data.password
+    print(hashed_password)
+
+    if check_password_hash(hashed_password, password):
         access_token = create_access_token(identity=user.user_id)
         response = jsonify({'user': {
             'user_id': user.user_id,

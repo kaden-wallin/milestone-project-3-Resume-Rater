@@ -9,7 +9,7 @@ const RegisterForm = ({ setUser }) => {
     const navigate = useNavigate()
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault()
 
         try {
             const response = await axios.post("http://localhost:5000/register", {
@@ -18,10 +18,11 @@ const RegisterForm = ({ setUser }) => {
                 password,
             });
 
-            setUser(response.data.user);
+            setUser(response.data.user)
+            localStorage.setItem('access_token', response.data.user.access_token)
             navigate('/')
         } catch (error) {
-            console.error(error);
+            console.error(error)
         }
     }
 
