@@ -3,7 +3,8 @@ from flask import Flask, make_response, jsonify, request, redirect, url_for
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from models import Users, Passwords, UserToken, Resumes, CommentsAndRatings
+from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, get_jwt_identity
+from models import Users, Passwords, Resumes, CommentsAndRatings
 from database import session
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -19,8 +20,8 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SUPABASE_URI")
-secret_key = os.getenv("SECRET_KEY")
-app.secret_key = secret_key
+app.config['JWT_SECRET_KEY'] = os.getenv("SECRET_KEY")
+jwt = JWTManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -30,6 +31,16 @@ def allowed_file(filename, allowed_extensions):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        verify_jwt_in_request()
+        user_id = get_jwt_identity()
+        current_user = session.query(Users).filter_by(user_id=user_id).first()
+        return f(current_user, *args, **kwargs)
+    return decorated
+
+# Login routes
 # Routes
 @app.route('/register', methods=['POST'])
 def register():
@@ -48,26 +59,28 @@ def register():
     if session.query(Users).filter_by(email=email).first() is not None:
         return jsonify({'error': 'Email address already in use'}), 400
 
+    salt = secrets.token_hex(16)
+    hashed_password = argon2.hash(password + salt)
     user = Users(username=username, email=email)
     session.add(user)
     session.commit()
 
-    hashed_password = argon2_hasher.hash(password)
-    encoded_password = base64.b64encode(hashed_password.encode('utf-8'))
-    passwords = Passwords(password=encoded_password, user_id_fkey=user.user_id)
-    session.add(passwords)
-
-    token = UserToken(user=user, token=secrets.token_urlsafe())
-    session.add(token)
-
+    password = Passwords(salt=salt, password=hashed_password, user_id_fkey=user.user_id)
+    session.add(password)
+    
     session.commit()
     
-    return jsonify({'user': {
+    access_token = create_access_token(identity=user.user_id)
+    response = jsonify({'user': {
         'user_id': user.user_id,
         'username': user.username,
         'email': user.email,
-        'token': token
+        'access_token': access_token
     }})
+
+    response.set_cookie('access_token_cookie', access_token)
+    response.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
+    return response
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -84,36 +97,37 @@ def login():
     if user is None:
         return jsonify({'error': 'Invalid email or password'}), 401
 
-    encoded_password = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first().password
-    decoded_password = base64.b64decode(encoded_password.encode('utf-8'))
+    password_data = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first()
+    salt = password_data.salt
+    hashed_password = password_data.password
 
-    try:
-        argon2_hasher.verify(decoded_password, password)
-    except argon2.exceptions.VerifyMismatchError:
+    if argon2.verify(password + salt, hashed_password):
+        access_token = create_access_token(identity=user.user_id)
+        response = jsonify({'user': {
+            'user_id': user.user_id,
+            'username': user.username,
+            'email': user.email,
+            'access_token': access_token
+        }})
+
+        response.set_cookie('access_token_cookie', access_token)
+        response.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
+        return response
+    else:
         return jsonify({'error': 'Invalid email or password'}), 401
 
-    token = UserToken(user=user, token=secrets.token_urlsafe(), expires_at=datetime.utcnow() + timedelta(hours=1))
-    session.add(token)
-    session.commit()
-
-    response = jsonify({'user': {
-        'user_id': user.user_id,
-        'username': user.username,
-        'email': user.email,
-        'token': token
-    }})
-    response.set_cookie('token', token)
-    response.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
-    return response
 
 @app.route('/logout')
 def logout():
     response = make_response(jsonify({'message': 'Logged out successfully'}))
-    response.set_cookie('token', '', expires=0)
+    response.set_cookie('access_token_cookie', '', expires=0)
     response.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
     return response
 
+
+# Everything passed this point is resume routes
 @app.route('/upload-resume', methods=['POST'])
+@token_required
 def upload_resume(current_user):
     if 'resume' not in request.files:
         return jsonify({'error': 'No file in request'}), 400
@@ -126,15 +140,18 @@ def upload_resume(current_user):
     if not allowed_file(resume_file.filename, allowed_extensions):
         return jsonify({'error': 'Invalid file type'}), 400
 
-    filename = f"{current_user.user_id}_resume_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{resume_file.filename}"
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    resume_file.save(file_path)
+    # Create a new instance of the Resumes model and set its attributes
+    resume = Resumes()
+    resume.user_id_fkey = current_user.user_id
+    resume.uploaded_at = datetime.utcnow()
+    resume.filename = f"{current_user.user_id}_resume_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{resume_file.filename}"
+    resume.content_type = resume_file.content_type
+    resume.file_data = resume_file.read()
 
-    resume = Resumes(user_id_fkey=current_user.user_id, file_path=file_path)
     session.add(resume)
     session.commit()
 
-    return jsonify({'message': 'Resume uploaded successfully'}), 200
+    return jsonify({'success': 'Resume uploaded successfully'}), 200
 
 @app.route('/search', methods=['GET'])
 def search_resumes():
@@ -174,8 +191,8 @@ def add_comment_and_rating(resume_id):
     rating = request.json.get('rating')
 
     new_c_and_r = CommentsAndRatings(comment=comment, rating=rating, resume_id_fkey=resume_id)
-    db.session.add(new_c_and_r)
-    db.session.commit()
+    session.add(new_c_and_r)
+    session.commit()
 
     return jsonify({'success': True}), 201
 
