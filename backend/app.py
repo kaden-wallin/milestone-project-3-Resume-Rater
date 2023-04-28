@@ -1,5 +1,6 @@
 # Imports
-from flask import Flask, make_response, jsonify, request, redirect, url_for
+from io import BytesIO
+from flask import Flask, make_response, jsonify, request, redirect, send_file, url_for
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -8,9 +9,12 @@ from models import Users, Passwords, Resumes, CommentsAndRatings
 from database import session
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from docx import Document
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-import secrets
+import PyPDF2
+import tempfile
+import chardet
 import os
 
 
@@ -38,8 +42,19 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
+def get_content_type(extension):
+    if extension == 'pdf':
+        return 'application/pdf'
+    elif extension == 'doc':
+        return 'application/msword'
+    elif extension == 'docx':
+        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    elif extension == 'txt':
+        return 'text/plain'
+    else:
+        return 'application/octet-stream'
+
 # Login routes
-# Routes
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -58,10 +73,6 @@ def register():
         return jsonify({'error': 'Email address already in use'}), 400
 
     hashed = generate_password_hash(password)
-    if check_password_hash(hashed, password):
-        print("It Matches!", hashed)
-    else:
-        print("It doesn't Match")
     user = Users(username=username, email=email)
     session.add(user)
     session.commit()
@@ -101,7 +112,6 @@ def login():
     password_data = session.query(Passwords).filter_by(user_id_fkey=user.user_id).first()
 
     hashed_password = password_data.password
-    print(hashed_password)
 
     if check_password_hash(hashed_password, password):
         access_token = create_access_token(identity=user.user_id)
@@ -142,70 +152,85 @@ def upload_resume(current_user):
     if not allowed_file(resume_file.filename, allowed_extensions):
         return jsonify({'error': 'Invalid file type'}), 400
 
-    # Create a new instance of the Resumes model and set its attributes
     resume = Resumes()
     resume.user_id_fkey = current_user.user_id
-    resume.uploaded_at = datetime.utcnow()
-    resume.filename = f"{current_user.user_id}_resume_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{resume_file.filename}"
-    resume.content_type = resume_file.content_type
-    resume.file_data = resume_file.read()
+    resume.filename = f"{current_user.username}_resume_{datetime.utcnow()}_{resume_file.filename}"
+
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        resume_file.save(temp_file.name)
+        temp_file.flush()
+        os.fsync(temp_file.fileno())
+        with open(temp_file.name, 'rb') as f:
+            content = f.read()
+            result = chardet.detect(content)
+            encoding_type = result['encoding'] if result['encoding'] is not None else 'utf-8'
+            file_extension = os.path.splitext(resume_file.filename)[1][1:].lower()
+            content_type = get_content_type(file_extension)
+
+            if file_extension == 'pdf':
+                pdf_reader = PyPDF2.PdfReader(f)
+                pdf_text = ""
+                for page in pdf_reader.pages:
+                    pdf_text += page.extract_text()
+                resume.resume_content = pdf_text
+            elif file_extension in ['doc', 'docx']:
+                doc = Document(f)
+                doc_text = ""
+                for para in doc.paragraphs:
+                    doc_text += para.text
+                resume.resume_content = doc_text
+            else:
+                resume.resume_content = content.decode(encoding_type)
+
+        temp_file.seek(0)
+        resume.resume = temp_file.read()
+        resume.content_type = content_type
 
     session.add(resume)
     session.commit()
 
     return jsonify({'success': 'Resume uploaded successfully'}), 200
 
-@app.route('/search', methods=['GET'])
-def search_resumes():
-    term = request.args.get('term')
+@app.route('/download-resume/<int:resume_id>', methods=['GET'])
+@token_required
+def download_resume(current_user, resume_id):
+    resume = session.query(Resumes).filter_by(resume_id=resume_id, user_id_fkey=current_user.user_id).first()
+    if resume is None:
+        return jsonify({'error': 'Resume not found'}), 404
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        resume.save(temp_file.name)
+        with open(temp_file.name, 'rb') as f:
+            file_content = f.read()
 
-    if not term:
-        return jsonify({'error': 'Missing search term'}), 400
+    content_type = get_content_type(resume.content_type)
+    headers = {
+        'Content-Type': content_type,
+        'Content-Disposition': f'attachment; filename="{resume.filename}"'
+    }
 
-    search_results = Resumes.query.filter(Resumes.resume.ilike(f'%{term}%')).all()
+    return make_response(file_content, headers)
 
-    return jsonify([{'resume_id': resume.resume_id, 'resume': resume.resume} for resume in search_results])
+@app.route('/resumes', methods=['GET'])
+@token_required
+def get_resumes(current_user):
+    resumes = session.query(Resumes).filter_by(user_id_fkey=current_user.user_id).all()
+
+    resume_list = []
+    for resume in resumes:
+        resume_dict = {
+            'resume_id': resume.resume_id,
+            'filename': resume.filename,
+            'resume': resume.resume,
+        }
+        resume_list.append(resume_dict)
+
+    return jsonify({'resumes': resume_list})
 
 @app.route('/resumes/<int:resume_id>', methods=['GET'])
-def get_resume(resume_id):
-    resume = Resumes.query.filter_by(resume_id=resume_id).first()
+def get_resume(current_user, resume_id):
+    resume = session.query(Resumes).filter_by(resume_id=resume_id, user_id_fkey=current_user.user_id).first()
 
     if not resume:
         return jsonify({'error': 'Resume not found'}), 404
 
-    return make_response(resume.resume, {'Content-Type': 'application/pdf'})
-
-@app.route('/resumes/<int:resume_id>/comments', methods=['GET'])
-def get_resume_comments(resume_id):
-    comments = CommentsAndRatings.query.filter_by(resume_id_fkey=resume_id).with_entities(CommentsAndRatings.comment).all()
-    comments_list = [c[0] for c in comments]
-    return jsonify({'comments': comments_list}), 200
-
-@app.route('/resumes/<int:resume_id>/ratings', methods=['GET'])
-def get_resume_ratings(resume_id):
-    ratings = CommentsAndRatings.query.filter_by(resume_id_fkey=resume_id).with_entities(CommentsAndRatings.rating).all()
-    ratings_list = [r[0] for r in ratings]
-    return jsonify({'ratings': ratings_list}), 200
-
-@app.route('/resumes/<int:resume_id>/feedback', methods=['POST'])
-def add_comment_and_rating(resume_id):
-    comment = request.json.get('comment')
-    rating = request.json.get('rating')
-
-    new_c_and_r = CommentsAndRatings(comment=comment, rating=rating, resume_id_fkey=resume_id)
-    session.add(new_c_and_r)
-    session.commit()
-
-    return jsonify({'success': True}), 201
-
-@app.route('/resumes/<int:resume_id>/feedback', methods=['GET'])
-def get_comments_and_ratings(resume_id):
-
-    c_and_rs = CommentsAndRatings.query.filter_by(resume_id_fkey=resume_id).all()
-
-    c_and_rs_list = [{'comment': c_and_r.comment, 'rating': c_and_r.rating} for c_and_r in c_and_rs]
-
-    return jsonify(c_and_rs_list), 200
-
-if __name__ == '__main__':
-    app.run()
+    return send_file(BytesIO(resume.file_data), attachment_filename=resume.filename, mimetype=resume.content_type)
