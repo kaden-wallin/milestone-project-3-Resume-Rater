@@ -42,6 +42,18 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
+def get_content_type(extension):
+    if extension == 'pdf':
+        return 'application/pdf'
+    elif extension == 'doc':
+        return 'application/msword'
+    elif extension == 'docx':
+        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    elif extension == 'txt':
+        return 'text/plain'
+    else:
+        return 'application/octet-stream'
+
 # Login routes
 @app.route('/register', methods=['POST'])
 def register():
@@ -142,7 +154,7 @@ def upload_resume(current_user):
 
     resume = Resumes()
     resume.user_id_fkey = current_user.user_id
-    resume.filename = f"{current_user.username}_resume_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{resume_file.filename}"
+    resume.filename = f"{current_user.username}_resume_{datetime.utcnow()}_{resume_file.filename}"
 
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         resume_file.save(temp_file.name)
@@ -153,6 +165,7 @@ def upload_resume(current_user):
             result = chardet.detect(content)
             encoding_type = result['encoding'] if result['encoding'] is not None else 'utf-8'
             file_extension = os.path.splitext(resume_file.filename)[1][1:].lower()
+            content_type = get_content_type(file_extension)
 
             if file_extension == 'pdf':
                 pdf_reader = PyPDF2.PdfReader(f)
@@ -171,11 +184,31 @@ def upload_resume(current_user):
 
         temp_file.seek(0)
         resume.resume = temp_file.read()
+        resume.content_type = content_type
 
     session.add(resume)
     session.commit()
 
     return jsonify({'success': 'Resume uploaded successfully'}), 200
+
+@app.route('/download-resume/<int:resume_id>', methods=['GET'])
+@token_required
+def download_resume(current_user, resume_id):
+    resume = session.query(Resumes).filter_by(resume_id=resume_id, user_id_fkey=current_user.user_id).first()
+    if resume is None:
+        return jsonify({'error': 'Resume not found'}), 404
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        resume.save(temp_file.name)
+        with open(temp_file.name, 'rb') as f:
+            file_content = f.read()
+
+    content_type = get_content_type(resume.content_type)
+    headers = {
+        'Content-Type': content_type,
+        'Content-Disposition': f'attachment; filename="{resume.filename}"'
+    }
+
+    return make_response(file_content, headers)
 
 @app.route('/resumes', methods=['GET'])
 @token_required
