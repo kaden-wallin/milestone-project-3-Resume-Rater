@@ -29,6 +29,7 @@ class Resumes(Base):
     resume_id = Column(Integer, primary_key=True)
     filename = Column(String(255))
     resume = Column(BYTEA)
+    resume_content = Column(Text)
     user_id_fkey = Column(Integer, ForeignKey('users.user_id'))
     user = relationship('Users', backref='resumes')
     

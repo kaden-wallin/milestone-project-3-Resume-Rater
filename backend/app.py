@@ -9,9 +9,12 @@ from models import Users, Passwords, Resumes, CommentsAndRatings
 from database import session
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from docx import Document
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-import secrets
+import PyPDF2
+import tempfile
+import chardet
 import os
 
 
@@ -40,7 +43,6 @@ def token_required(f):
     return decorated
 
 # Login routes
-# Routes
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -140,9 +142,35 @@ def upload_resume(current_user):
 
     resume = Resumes()
     resume.user_id_fkey = current_user.user_id
-    resume.filename = f"{current_user.user_id}_resume_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{resume_file.filename}"
-    resume.content_type = resume_file.content_type
-    resume.resume = resume_file.read()
+    resume.filename = f"{current_user.username}_resume_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{resume_file.filename}"
+
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        resume_file.save(temp_file.name)
+        temp_file.flush()
+        os.fsync(temp_file.fileno())
+        with open(temp_file.name, 'rb') as f:
+            content = f.read()
+            result = chardet.detect(content)
+            encoding_type = result['encoding'] if result['encoding'] is not None else 'utf-8'
+            file_extension = os.path.splitext(resume_file.filename)[1][1:].lower()
+
+            if file_extension == 'pdf':
+                pdf_reader = PyPDF2.PdfReader(f)
+                pdf_text = ""
+                for page in pdf_reader.pages:
+                    pdf_text += page.extract_text()
+                resume.resume_content = pdf_text
+            elif file_extension in ['doc', 'docx']:
+                doc = Document(f)
+                doc_text = ""
+                for para in doc.paragraphs:
+                    doc_text += para.text
+                resume.resume_content = doc_text
+            else:
+                resume.resume_content = content.decode(encoding_type)
+
+        temp_file.seek(0)
+        resume.resume = temp_file.read()
 
     session.add(resume)
     session.commit()

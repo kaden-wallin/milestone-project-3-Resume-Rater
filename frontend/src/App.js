@@ -4,6 +4,7 @@ import Home from './components/home';
 import LoginForm from './components/login';
 import RegisterForm from './components/register';
 import ResumeUploader from './components/resumeUploader';
+import Resumes from './components/resumes';
 
 function App() {
     const [user, setUser] = useState(null)
@@ -15,6 +16,7 @@ function App() {
                 <Route path="/login" element={<LoginForm setUser={setUser} />} />
                 <Route path="/register" element={<RegisterForm setUser={setUser} />} />
                 <Route path="/resume-uploader" element={<ResumeUploader user={user} />} />
+                <Route path="/resumes" element={<Resumes user={user} />} />
             </Routes>
         </BrowserRouter>
     );
