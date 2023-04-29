@@ -1,11 +1,12 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import setAuthToken from './setAuthToken'
+import SearchResumes from "./searchResumes";
 
 const Home = ({ user, setUser }) => {
     const navigate = useNavigate()
     const [resumeId, setResumeId] = useState("")
-
+    
     const handleLogin = () => {
         navigate("/login")
     }
@@ -27,17 +28,15 @@ const Home = ({ user, setUser }) => {
         navigate("/resumes")
     }
 
-    const handleSearch = async (event) => {
-        event.preventDefault();
+    const handleSearch = async (searchKeywords) => {
         try {
-          const response = await fetch(`http://localhost:5000/download-resume/${resumeId}`);
-          const blob = await response.blob();
-          const fileUrl = URL.createObjectURL(blob);
-          navigate(`/resumes/${resumeId}`, { state: { fileUrl } });
+          const response = await fetch(`http://localhost:5000/search-resumes/${searchKeywords}`);
+          const searchResults = await response.json();
+          navigate("/search-results", { state: { searchResults } });
         } catch (error) {
           console.error(error);
         }
-      };
+    };
 
     window.addEventListener('load', () => {
         setAuthToken(localStorage.getItem('access_token'))
@@ -55,16 +54,7 @@ const Home = ({ user, setUser }) => {
                     <button onClick={handleResumeUpload}>Upload Resume</button>
                     <button onClick={handleResumes}>See Resumes</button>
                 </div>
-                <form onSubmit={handleSearch}>
-                    <label htmlFor="resumeId">Search by Resume ID:</label>
-                    <input
-                        type="number"
-                        id="resumeId"
-                        value={resumeId}
-                        onChange={(event) => setResumeId(event.target.value)}
-                    />
-                    <button type="submit">Search</button>
-                </form>
+                <SearchResumes handleSearch={handleSearch} />
             </div>
             ) : (
                 <div>
@@ -73,16 +63,7 @@ const Home = ({ user, setUser }) => {
                     <button onClick={handleLogin}>Login</button>
                     <button onClick={handleRegister}>Register</button>
                 </div>
-                <form onSubmit={handleSearch}>
-                    <label htmlFor="resumeId">Search by Resume ID:</label>
-                    <input
-                        type="number"
-                        id="resumeId"
-                        value={resumeId}
-                        onChange={(event) => setResumeId(event.target.value)}
-                    />
-                    <button type="submit">Search</button>
-                </form>
+                <SearchResumes handleSearch={handleSearch} />
             </div>
             )}
         </>

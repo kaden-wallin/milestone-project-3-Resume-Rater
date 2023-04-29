@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from "react-router-dom"
 
 function SearchResumes() {
+    const navigate = useNavigate()
     const [searchTerm, setSearchTerm] = useState('')
     const [searchResults, setSearchResults] = useState([])
     const [loading, setLoading] = useState(false)
 
-    const handleSearch = (event) => {
+    const handleSearch = async (event) => {
         event.preventDefault()
         setLoading(true)
-        axios
-            .get(`http://localhost:5000/search-resumes?keyword=${searchTerm}`)
-            .then(response => {
-                setSearchResults(response.data.resumes)
-                setLoading(false)
-            })
-            .catch(error => {
-                console.error(`Fetch error: ${error}`)
-                setLoading(false)
-            })
+        try {
+            const response = await axios.get(`http://localhost:5000/search-resumes?keyword=${searchTerm}`)
+            setSearchResults(response.data.resumes)
+            setLoading(false)
+        } catch (error) {
+            console.error(`Fetch error: ${error}`)
+            setLoading(false)
+        }
     }
 
     return (
@@ -32,7 +32,11 @@ function SearchResumes() {
             {!loading && searchResults.length > 0 && (
                 <ul>
                     {searchResults.map(resume => (
-                        <li key={resume.resume_id}>{resume.filename} ({resume.user.username})</li>
+                        <li key={resume.resume_id}>
+                            <button onClick={() => navigate(`/resumes/${resume.resume_id}`)}>
+                                {resume.filename}
+                            </button>
+                        </li>
                     ))}
                 </ul>
             )}
