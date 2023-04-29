@@ -223,8 +223,7 @@ def search_resumes():
     for resume in resumes:
         resume_dict = {
             'resume_id': resume.resume_id,
-            'filename': resume.filename,
-            'username': resume.user.username
+            'filename': resume.filename
         }
         resume_list.append(resume_dict)
 

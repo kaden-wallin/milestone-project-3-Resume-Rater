@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom"
 
@@ -20,6 +20,7 @@ function SearchResumes() {
             setLoading(false)
         }
     }
+    console.log(searchResults)
 
     return (
         <div>
@@ -28,8 +29,9 @@ function SearchResumes() {
                 <button type="submit">Search</button>
             </form>
             {loading && <p>Loading...</p>}
-            {!loading && searchResults.length === 0 && <p>No matching resumes found</p>}
-            {!loading && searchResults.length > 0 && (
+            {searchResults === undefined && <p>No Matching resumes found</p>}
+            {!loading && searchResults && searchResults.length === 0}
+            {!loading && searchResults && searchResults.length > 0 && (
                 <ul>
                     {searchResults.map(resume => (
                         <li key={resume.resume_id}>

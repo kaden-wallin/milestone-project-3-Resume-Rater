@@ -1,11 +1,10 @@
-import React, { useState } from "react"
+import React from "react"
 import { useNavigate } from "react-router-dom"
 import setAuthToken from './setAuthToken'
 import SearchResumes from "./searchResumes";
 
 const Home = ({ user, setUser }) => {
     const navigate = useNavigate()
-    const [resumeId, setResumeId] = useState("")
     
     const handleLogin = () => {
         navigate("/login")

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import  DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer'
 import axios from 'axios'
 
@@ -7,6 +7,11 @@ function ViewResume() {
   const { resumeId } = useParams()
   const [fileUrl, setFileUrl] = useState(null)
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+
+  const home = () => {
+    navigate('/')
+}
 
   useEffect(() => {
     axios
@@ -29,6 +34,7 @@ function ViewResume() {
           pluginRenderers={DocViewerRenderers}
         />
       )}
+      <button onClick={home}>Back</button>
     </div>
   )
 }
