@@ -229,52 +229,31 @@ def search_resumes():
 
     return jsonify({'resumes': resume_list}), 200
 
-@app.route('/comments_and_ratings', methods=['POST'])
+@app.route('/comments-and-ratings', methods=['POST'])
 @token_required
 def add_comment_and_rating(current_user):
     comment = request.json['comment']
     rating = request.json['rating']
-    user_id = current_user.user_id
+    user_id_fkey = current_user.user_id
     resume_id = request.json['resumeId']
 
-    new_comment_and_rating = CommentsAndRatings(comment=comment, rating=rating, 
-                                                user_id_fkey=user_id, resume_id_fkey=resume_id)
+    new_comment_and_rating = CommentsAndRatings(
+        comment=comment,
+        rating=rating, 
+        user_id_fkey=user_id_fkey,
+        resume_id_fkey=resume_id
+        )
     session.add(new_comment_and_rating)
     session.commit()
 
-    return {'message': 'Comment and rating added successfully'}, 201
+    return {'message': 'Comment and rating added successfully'}, 200
 
 @app.route('/comments-and-ratings/<int:resume_id>')
 def get_comments_and_ratings(resume_id):
-    comments_and_ratings = CommentsAndRatings.query.filter_by(resume_id_fkey=resume_id).all()
+    comments_and_ratings = session.query(CommentsAndRatings).filter_by(resume_id_fkey=resume_id).all()
     if comments_and_ratings:
         comments = [c.comment for c in comments_and_ratings]
         ratings = [c.rating for c in comments_and_ratings]
         return jsonify({'comments': comments, 'ratings': ratings})
     else:
         return jsonify({'error': f'Resume with ID {resume_id} not found'}), 404
-
-# @app.route('/resumes', methods=['GET'])
-# @token_required
-# def get_resumes(current_user):
-#     resumes = session.query(Resumes).filter_by(user_id_fkey=current_user.user_id).all()
-
-#     resume_list = []
-#     for resume in resumes:
-#         resume_dict = {
-#             'resume_id': resume.resume_id,
-#             'filename': resume.filename,
-#             'resume': resume.resume,
-#         }
-#         resume_list.append(resume_dict)
-
-#     return jsonify({'resumes': resume_list})
-
-# @app.route('/resumes/<int:resume_id>', methods=['GET'])
-# def get_resume(current_user, resume_id):
-#     resume = session.query(Resumes).filter_by(resume_id=resume_id, user_id_fkey=current_user.user_id).first()
-
-#     if not resume:
-#         return jsonify({'error': 'Resume not found'}), 404
-
-#     return send_file(BytesIO(resume.file_data), attachment_filename=resume.filename, mimetype=resume.content_type)

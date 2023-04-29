@@ -23,10 +23,6 @@ const Home = ({ user, setUser }) => {
         localStorage.removeItem("access_token")
     }
 
-    const handleResumes = () => {
-        navigate("/resumes")
-    }
-
     const handleSearch = async (searchKeywords) => {
         try {
           const response = await fetch(`http://localhost:5000/search-resumes/${searchKeywords}`);
@@ -51,7 +47,6 @@ const Home = ({ user, setUser }) => {
                 <div>
                     <button onClick={handleLogout}>Logout</button>
                     <button onClick={handleResumeUpload}>Upload Resume</button>
-                    <button onClick={handleResumes}>See Resumes</button>
                 </div>
                 <SearchResumes handleSearch={handleSearch} />
             </div>
