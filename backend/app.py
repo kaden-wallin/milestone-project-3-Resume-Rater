@@ -149,7 +149,7 @@ def upload_resume(current_user):
     if resume_file.filename == '':
         return jsonify({'error': 'No file selected'}), 400
 
-    allowed_extensions = {'pdf', 'doc', 'docx', 'txt'}
+    allowed_extensions = {'pdf', 'doc', 'docx'}
     if not allowed_file(resume_file.filename, allowed_extensions):
         return jsonify({'error': 'Invalid file type'}), 400
 

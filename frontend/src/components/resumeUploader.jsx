@@ -51,7 +51,7 @@ const ResumeUploader = ({ user }) => {
           <div {...getRootProps()}>
             <input {...getInputProps()} />
             <p>
-              Drag and drop your resume file here or click to select a file
+              Drag and drop your resume file here or click to select a file (only pdf, doc, and docx types supported)
             </p>
             {file && <p>Selected file: {file.name}</p>}
           </div>

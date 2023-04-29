@@ -20,7 +20,6 @@ function SearchResumes() {
             setLoading(false)
         }
     }
-    console.log(searchResults)
 
     return (
         <div>
