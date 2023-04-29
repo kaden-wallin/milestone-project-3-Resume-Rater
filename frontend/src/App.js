@@ -6,6 +6,7 @@ import RegisterForm from './components/register';
 import ResumeUploader from './components/resumeUploader';
 import ViewResume from './components/resumeViewer';
 import SearchResumes from './components/searchResumes';
+import './App.css';
 
 function App() {
     const [user, setUser] = useState(null)

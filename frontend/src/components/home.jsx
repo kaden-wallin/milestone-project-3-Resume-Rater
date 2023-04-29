@@ -2,10 +2,11 @@ import React from "react"
 import { useNavigate } from "react-router-dom"
 import setAuthToken from './setAuthToken'
 import SearchResumes from "./searchResumes";
+import { buttonStyles, containerStyles, titleStyle } from './styles';
 
 const Home = ({ user, setUser }) => {
     const navigate = useNavigate()
-    
+
     const handleLogin = () => {
         navigate("/login")
     }
@@ -40,27 +41,27 @@ const Home = ({ user, setUser }) => {
     const isAuthenticated = user && localStorage.getItem("access_token")
 
     return (
-        <>
+        <div style={containerStyles} >
             {isAuthenticated ? (
             <div>
-                <h1>Welcome to Rotten Resumes</h1>
+                <h1 style={titleStyle}>Welcome to Rotten Resumes</h1>
                 <div>
-                    <button onClick={handleLogout}>Logout</button>
-                    <button onClick={handleResumeUpload}>Upload Resume</button>
+                    <button style={buttonStyles} onClick={handleLogout}>Logout</button>
+                    <button style={buttonStyles} onClick={handleResumeUpload}>Upload Resume</button>
                 </div>
                 <SearchResumes handleSearch={handleSearch} />
             </div>
             ) : (
                 <div>
-                <h1>Welcome to Rotten Resumes</h1>
+                <h1 style={titleStyle}>Welcome to Rotten Resumes</h1>
                 <div>
-                    <button onClick={handleLogin}>Login</button>
-                    <button onClick={handleRegister}>Register</button>
+                    <button style={buttonStyles} onClick={handleLogin}>Login</button>
+                    <button style={buttonStyles} onClick={handleRegister}>Register</button>
                 </div>
                 <SearchResumes handleSearch={handleSearch} />
             </div>
             )}
-        </>
+        </div>
     );
 };
 

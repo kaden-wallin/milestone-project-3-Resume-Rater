@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from docx import Document
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-import PyPDF2
+import fitz
 import tempfile
 import chardet
 import base64
@@ -169,10 +169,10 @@ def upload_resume(current_user):
             content_type = get_content_type(file_extension)
 
             if file_extension == 'pdf':
-                pdf_reader = PyPDF2.PdfReader(f)
-                pdf_text = ""
-                for page in pdf_reader.pages:
-                    pdf_text += page.extract_text()
+                with fitz.open(f) as pdf:
+                    pdf_text = ""
+                    for page in pdf:
+                        pdf_text += page.get_text()
                 resume.resume_content = pdf_text.lower().split()
             elif file_extension in ['doc', 'docx']:
                 doc = Document(f)

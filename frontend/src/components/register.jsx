@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { titleStyle, buttonStyles, buttonStylesCR, containerStyles } from "./styles";
 
 const RegisterForm = ({ setUser }) => {
     const [username, setUsername] = useState('')
@@ -35,37 +36,43 @@ const RegisterForm = ({ setUser }) => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1>Register</h1>
-            <label htmlFor="username">Username</label>
-            <input
-                type="text"
-                name="username"
-                required
-                onChange={(event) => setUsername(event.target.value)}
-            />
-            <label htmlFor="email">Email</label>
-            <input
-                type="email"
-                name="email"
-                autoComplete="email"
-                required
-                onChange={(event) => setEmail(event.target.value)}
-            />
-            <label htmlFor="password">Password</label>
-            <input
-                type="password"
-                name="password"
-                minLength="8"
-                autoComplete="current-password"
-                required
-                onChange={(event) => setPassword(event.target.value)}
-            />
-            <button type="submit">Register</button>
-            <p>Already have an account? Login here</p>
-            <button onClick={login}>Login</button>
-            <button onClick={home}>Back</button>
-        </form>
+        <div style={containerStyles}>
+            <h1 style={titleStyle}>Register</h1>
+            <form style={buttonStylesCR} onSubmit={handleSubmit}>
+                <label htmlFor="username">Username</label>
+                    <input
+                        style={buttonStyles}
+                        type="text"
+                        name="username"
+                        required
+                        onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <br></br>
+                <label htmlFor="email">Email</label>
+                    <input
+                        style={buttonStyles}
+                        type="email"
+                        name="email"
+                        autoComplete="email"
+                        required
+                        onChange={(event) => setEmail(event.target.value)}
+                    />
+                    <br></br>
+                <label htmlFor="password">Password</label>
+                    <input
+                        style={buttonStyles}
+                        type="password"
+                        name="password"
+                        autoComplete="current-password"
+                        required
+                        onChange={(event) => setPassword(event.target.value)}
+                    />
+                <button style={buttonStyles} type="submit">Register</button>
+                <p>Already have an account? Login here</p>
+                <button style={buttonStyles} onClick={login}>Login</button>
+                <button style={buttonStyles} onClick={home}>Back</button>
+            </form>
+        </div>
     )
 }
 

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import FileViewer from 'react-file-viewer'
 import CommentsAndRatings from './commentsAndRatings'
 import axios from 'axios'
+import { docxStyle, buttonStyles, buttonStylesCR } from './styles'
 
 function ViewResume({ user }) {
     const { resumeId } = useParams()
@@ -12,6 +13,7 @@ function ViewResume({ user }) {
     const [comments, setComments] = useState([])
     const [ratings, setRatings] = useState([])
     const navigate = useNavigate()
+
 
     const home = () => {
         navigate('/')
@@ -73,50 +75,64 @@ function ViewResume({ user }) {
     };
 
     return (
-        <>
+        <div style={docxStyle}>
             {isAuthenticated ? (
                 <div>
-                    {loading && <p>Loading...</p>}
+                    {loading && <p style={buttonStylesCR}>Loading...</p>}
                     {!loading && fileType && (
-                        <FileViewer
-                            fileType={fileType}
-                            filePath={fileUrl}
-                            errorComponent={CustomErrorComponent}
-                        />
+                        <div > 
+                            <FileViewer
+                                fileType={fileType}
+                                filePath={fileUrl}
+                                errorComponent={CustomErrorComponent}
+                            />
+                        </div>
                     )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     <CommentsAndRatings resumeId={resumeId} />
-                    <div>
+                    { comments.length === 0 && ratings.length === 0 ? (
+                        <p style={buttonStylesCR}>No comments or ratings to display</p>
+                    ) : (
+                    <div style={buttonStyles}>
                         {comments.map((comment, index) => (
                             <span key={index}>
                                 {comment} - {ratings[index]} stars
                             </span>
                         ))}
                     </div>
-                    <button onClick={home}>Back</button>
+                    )}
+                    <button style={buttonStyles} onClick={home}>Back</button>
                 </div>
             ) : (
                 <div>
-                    {loading && <p>Loading...</p>}
+                    {loading && <p style={buttonStylesCR}>Loading...</p>}
                     {!loading && fileType && (
-                        <FileViewer
-                            fileType={fileType}
-                            filePath={fileUrl}
-                            errorComponent={CustomErrorComponent}
-                        />
+                        <div > 
+                            <FileViewer
+                                fileType={fileType}
+                                filePath={fileUrl}
+                                errorComponent={CustomErrorComponent}
+                            />
+                            <br></br>
+                        </div>
                     )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
-                    <div>
+                    { comments.length === 0 && ratings.length === 0 ? (
+                        <p style={buttonStylesCR}>No comments or ratings to display</p>
+                    ) : (
+                    <div style={buttonStyles}>
                         {comments.map((comment, index) => (
                             <span key={index}>
                                 {comment} - {ratings[index]} stars
                             </span>
                         ))}
                     </div>
-                    <button onClick={home}>Back</button>
+                    )}
+                    <br></br>
+                    <button style={buttonStyles} onClick={home}>Back</button>
                 </div>
             )}
-        </>
+        </div>
     )
 }
 

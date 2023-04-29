@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom"
+import { buttonStylesCR, buttonStyles, resultStyles, listStyles } from './styles'
 
 function SearchResumes() {
     const navigate = useNavigate()
@@ -24,17 +25,17 @@ function SearchResumes() {
     return (
         <div>
             <form onSubmit={handleSearch}>
-                <input type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
-                <button type="submit">Search</button>
+                <input style={buttonStyles} type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
+                <button style={buttonStyles} type="submit">Search</button>
             </form>
-            {loading && <p>Loading...</p>}
+            {loading && <p style={buttonStylesCR}>Loading...</p>}
             {searchResults === undefined && <p>No Matching resumes found</p>}
             {!loading && searchResults && searchResults.length === 0}
             {!loading && searchResults && searchResults.length > 0 && (
-                <ul>
+                <ul style={listStyles}>
                     {searchResults.map(resume => (
                         <li key={resume.resume_id}>
-                            <button onClick={() => navigate(`/resumes/${resume.resume_id}`)}>
+                            <button style={resultStyles} onClick={() => navigate(`/resumes/${resume.resume_id}`)}>
                                 {resume.filename}
                             </button>
                         </li>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios';
 import setAuthToken from './setAuthToken'
+import { buttonStyles, buttonStylesCR } from './styles';
 
 function CommentsAndRatings({ resumeId }) {
     const [comment, setComment] = useState('')
@@ -38,21 +39,22 @@ function CommentsAndRatings({ resumeId }) {
 
     return (
         <div>
-            <form onSubmit={handleSubmit}>
+            <form style={buttonStylesCR} onSubmit={handleSubmit}>
                 <label>
                     Comment:
-                    <input type="text" value={comment} onChange={handleCommentChange} />
+                    <input type="text" style={buttonStyles} value={comment} onChange={handleCommentChange} />
                 </label>
+                <br></br>
                 <label>
                     Rating:
-                    <select value={rating} onChange={handleRatingChange}>
+                    <select style={buttonStyles} value={rating} onChange={handleRatingChange}>
                         <option value="0">Select a rating</option>
                         {[...Array(5)].map((_, index) => (
                             <option key={index} value={index + 1}>{index + 1}</option>
                         ))}
                     </select>
                 </label>
-                <button type="submit">Submit</button>
+                <button style={buttonStyles} type="submit">Submit</button>
             </form>
         </div>
     );
