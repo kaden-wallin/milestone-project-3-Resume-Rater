@@ -15,6 +15,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import PyPDF2
 import tempfile
 import chardet
+import base64
 import os
 
 
@@ -172,15 +173,15 @@ def upload_resume(current_user):
                 pdf_text = ""
                 for page in pdf_reader.pages:
                     pdf_text += page.extract_text()
-                resume.resume_content = pdf_text
+                resume.resume_content = pdf_text.lower().split()
             elif file_extension in ['doc', 'docx']:
                 doc = Document(f)
                 doc_text = ""
                 for para in doc.paragraphs:
                     doc_text += para.text
-                resume.resume_content = doc_text
+                resume.resume_content = doc_text.lower().split()
             else:
-                resume.resume_content = content.decode(encoding_type)
+                resume.resume_content = content.decode(encoding_type).lower().split()
 
         temp_file.seek(0)
         resume.resume = temp_file.read()
@@ -192,23 +193,42 @@ def upload_resume(current_user):
     return jsonify({'success': 'Resume uploaded successfully'}), 200
 
 @app.route('/download-resume/<int:resume_id>', methods=['GET'])
-@token_required
-def download_resume(current_user, resume_id):
-    resume = session.query(Resumes).filter_by(resume_id=resume_id, user_id_fkey=current_user.user_id).first()
+def download_resume(resume_id):
+    resume = session.query(Resumes).filter_by(resume_id=resume_id).first()
     if resume is None:
         return jsonify({'error': 'Resume not found'}), 404
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        resume.save(temp_file.name)
+        temp_file.write(resume.resume)
         with open(temp_file.name, 'rb') as f:
             file_content = f.read()
 
     content_type = get_content_type(resume.content_type)
-    headers = {
-        'Content-Type': content_type,
-        'Content-Disposition': f'attachment; filename="{resume.filename}"'
-    }
 
-    return make_response(file_content, headers)
+    return jsonify({
+        'url': f'data:{content_type};base64,{base64.b64encode(file_content).decode()}',
+        'filename': resume.filename
+    })
+
+@app.route('/search-resumes', methods=['GET'])
+def search_resumes():
+    keyword = request.args.get('keyword').lower()
+    if keyword is None:
+        return jsonify({'error': 'Keyword parameter missing'}), 400
+
+    resumes = session.query(Resumes).filter(Resumes.resume_content.ilike(f'%{keyword}%')).all()
+    if len(resumes) == 0:
+        return jsonify({'message': 'No matching resumes found'}), 200
+
+    resume_list = []
+    for resume in resumes:
+        resume_dict = {
+            'resume_id': resume.resume_id,
+            'filename': resume.filename,
+            'username': resume.user.username
+        }
+        resume_list.append(resume_dict)
+
+    return jsonify({'resumes': resume_list}), 200
 
 @app.route('/resumes', methods=['GET'])
 @token_required

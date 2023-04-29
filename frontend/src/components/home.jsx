@@ -27,10 +27,17 @@ const Home = ({ user, setUser }) => {
         navigate("/resumes")
     }
 
-    const handleSearch = (event) => {
+    const handleSearch = async (event) => {
         event.preventDefault();
-        navigate(`/resumes/${resumeId}`);
-    }
+        try {
+          const response = await fetch(`http://localhost:5000/download-resume/${resumeId}`);
+          const blob = await response.blob();
+          const fileUrl = URL.createObjectURL(blob);
+          navigate(`/resumes/${resumeId}`, { state: { fileUrl } });
+        } catch (error) {
+          console.error(error);
+        }
+      };
 
     window.addEventListener('load', () => {
         setAuthToken(localStorage.getItem('access_token'))
