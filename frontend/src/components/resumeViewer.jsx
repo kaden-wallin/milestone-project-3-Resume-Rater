@@ -42,7 +42,7 @@ function ViewResume({ user }) {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:5000/download-resume/${resumeId}`)
+            .get(`/api/download-resume/${resumeId}`)
             .then((response) => {
                 const file = response.data;
                 const binaryString = window.atob(file.url.split(',')[1]);
@@ -77,7 +77,7 @@ function ViewResume({ user }) {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:5000/comments-and-ratings/${resumeId}`)
+            .get(`/api/comments-and-ratings/${resumeId}`)
             .then((response) => {
                 const { comments, ratings, usernames } = response.data;
                 const commentsAndRatings = comments.map((comment, index) => ({
@@ -121,7 +121,7 @@ function ViewResume({ user }) {
                             <h1 style={ratingStyle}>and Ratings</h1>
                             {commentsAndRatings.map(({ comment, rating, username }, index) => (
                                 <span key={index} style={buttonStyles}>
-                                    {comment} - {rating} stars ({username})
+                                    {comment} <span style={color}>-</span> {rating} star(s) says <span style={color}>{username}</span>
                                 </span>
                             ))}
                             <button style={buttonStyles2} onClick={home}>Back</button>

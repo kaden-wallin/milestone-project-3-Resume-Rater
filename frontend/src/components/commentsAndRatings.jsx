@@ -22,7 +22,7 @@ function CommentsAndRatings({ resumeId }) {
 
         setAuthToken(localStorage.getItem('access_token'))
 
-        axios.post('http://localhost:5000/comments-and-ratings', {
+        axios.post('/api/comments-and-ratings', {
             comment: comment,
             rating: rating,
             resumeId: resumeId

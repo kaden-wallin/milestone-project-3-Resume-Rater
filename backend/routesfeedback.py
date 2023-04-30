@@ -1,27 +1,12 @@
 # Imports
-from io import BytesIO
-from flask import Blueprint, make_response, jsonify, request, redirect, send_file, url_for
-from flask_migrate import Migrate
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, get_jwt_identity
-from models import Users, Passwords, Resumes, CommentsAndRatings
+from flask import Blueprint, jsonify, request
+from models import Users, CommentsAndRatings
 from database import session
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
-from docx import Document
-from functools import wraps
 from utils import token_required
-from werkzeug.security import generate_password_hash, check_password_hash
-import fitz
-import tempfile
-import chardet
-import base64
-import os
 
 feedback_bp = Blueprint('feedback', __name__)
 
-@feedback_bp.route('/comments-and-ratings', methods=['POST'])
+@feedback_bp.route('/api/comments-and-ratings', methods=['POST'])
 @token_required
 def add_comment_and_rating(current_user):
     comment = request.json['comment']
@@ -40,7 +25,7 @@ def add_comment_and_rating(current_user):
 
     return {'message': 'Comment and rating added successfully'}, 200
 
-@feedback_bp.route('/comments-and-ratings/<int:resume_id>')
+@feedback_bp.route('/api/comments-and-ratings/<int:resume_id>')
 def get_comments_and_ratings(resume_id):
     comments_and_ratings = (
         session.query(CommentsAndRatings, Users.username)

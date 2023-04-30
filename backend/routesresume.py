@@ -1,17 +1,9 @@
 # Imports
-from io import BytesIO
-from flask import Blueprint, make_response, jsonify, request, redirect, send_file, url_for
-from flask_migrate import Migrate
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, get_jwt_identity
-from models import Users, Passwords, Resumes, CommentsAndRatings
+from flask import Blueprint, jsonify, request
+from models import Resumes
 from database import session
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
+from datetime import datetime
 from docx import Document
-from functools import wraps
-from werkzeug.security import generate_password_hash, check_password_hash
 from utils import token_required
 import fitz
 import tempfile
@@ -37,7 +29,7 @@ def get_content_type(extension):
     else:
         return 'application/octet-stream'
 
-@resume_bp.route('/upload-resume', methods=['POST'])
+@resume_bp.route('/api/upload-resume', methods=['POST'])
 @token_required
 def upload_resume(current_user):
     if 'resume' not in request.files:
@@ -90,7 +82,7 @@ def upload_resume(current_user):
 
     return jsonify({'success': 'Resume uploaded successfully'}), 200
 
-@resume_bp.route('/download-resume/<int:resume_id>', methods=['GET'])
+@resume_bp.route('/api/download-resume/<int:resume_id>', methods=['GET'])
 def download_resume(resume_id):
     resume = session.query(Resumes).filter_by(resume_id=resume_id).first()
     if resume is None:
@@ -107,7 +99,7 @@ def download_resume(resume_id):
         'filename': resume.filename
     })
 
-@resume_bp.route('/search-resumes', methods=['GET'])
+@resume_bp.route('/api/search-resumes', methods=['GET'])
 def search_resumes():
     keyword = request.args.get('keyword').lower()
     if keyword is None:

@@ -1,26 +1,13 @@
 # Imports
-from io import BytesIO
 from flask import Blueprint, make_response, jsonify, request
-from flask_migrate import Migrate
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager, create_access_token, verify_jwt_in_request, get_jwt_identity
-from models import Users, Passwords, Resumes, CommentsAndRatings
+from flask_jwt_extended import create_access_token
+from models import Users, Passwords
 from database import session
-from datetime import datetime, timedelta
-from dotenv import load_dotenv
-from docx import Document
-from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-import fitz
-import tempfile
-import chardet
-import base64
-import os
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
 
@@ -59,7 +46,7 @@ def register():
     response.headers['Access-Control-Expose-Headers'] = 'Set-Cookie'
     return response
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
 
@@ -94,7 +81,7 @@ def login():
         return jsonify({'error': 'Invalid email or password'}), 401
 
 
-@auth_bp.route('/logout')
+@auth_bp.route('/api/logout')
 def logout():
     response = make_response(jsonify({'message': 'Logged out successfully'}))
     response.set_cookie('access_token_cookie', '', expires=0)
