@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { errorStyle, buttonStyles2, titleStyle2, titleStyle, buttonStyles, letteringStyle, containerStyles } from "./styles";
 
 const LoginForm = ({ setUser }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState(null)
     const navigate = useNavigate()
 
     const handleSubmit = async (event) => {
@@ -20,7 +22,7 @@ const LoginForm = ({ setUser }) => {
             localStorage.setItem('access_token', response.data.user.access_token)
             navigate('/')
         } catch (error) {
-            console.error(error)
+            setErrorMessage('Email or password incorrect')
         }
     }
 
@@ -33,29 +35,39 @@ const LoginForm = ({ setUser }) => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1>Login</h1>
-            <label htmlFor="email">Email</label>
-            <input
-                type="email"
-                name="email"
-                autoComplete="email"
-                required
-                onChange={(event) => setEmail(event.target.value)}
-            />
-            <label htmlFor="password">Password</label>
-            <input
-                type="password"
-                name="password"
-                autoComplete="current-password"
-                required
-                onChange={(event) => setPassword(event.target.value)}
-            />
-            <button type="submit">Log in</button>
-            <p>New? Register here</p>
-            <button onClick={register}>Register</button>
-            <button onClick={home}>Back</button>
-        </form>
+        <div style={containerStyles}>
+            <h1 style={titleStyle}>Login here</h1>
+            <h1 style={titleStyle2}> and Critic</h1>
+            {errorMessage && <p style={errorStyle}>{errorMessage}</p>}
+            <form style={letteringStyle} onSubmit={handleSubmit}>
+                
+                <label htmlFor="email">Email</label>
+                <input
+                    placeholder="example@email.com"
+                    style={buttonStyles}
+                    type="email"
+                    name="email"
+                    autoComplete="email"
+                    required
+                    onChange={(event) => setEmail(event.target.value)}
+                />
+                <br></br>
+                <label htmlFor="password">Password</label>
+                <input
+                    placeholder="password123"
+                    style={buttonStyles}
+                    type="password"
+                    name="password"
+                    autoComplete="current-password"
+                    required
+                    onChange={(event) => setPassword(event.target.value)}
+                />
+                <button style={buttonStyles2} type="submit">Log in</button>
+                <p>New? Register here</p>
+                <button style={buttonStyles2} onClick={register}>Register</button>
+                <button style={buttonStyles} onClick={home}>Back</button>
+            </form>
+        </div>
     )
 }
 

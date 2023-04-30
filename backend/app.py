@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from docx import Document
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-import PyPDF2
+import fitz
 import tempfile
 import chardet
 import base64
@@ -169,10 +169,10 @@ def upload_resume(current_user):
             content_type = get_content_type(file_extension)
 
             if file_extension == 'pdf':
-                pdf_reader = PyPDF2.PdfReader(f)
-                pdf_text = ""
-                for page in pdf_reader.pages:
-                    pdf_text += page.extract_text()
+                with fitz.open(f) as pdf:
+                    pdf_text = ""
+                    for page in pdf:
+                        pdf_text += page.get_text()
                 resume.resume_content = pdf_text.lower().split()
             elif file_extension in ['doc', 'docx']:
                 doc = Document(f)
@@ -229,27 +229,31 @@ def search_resumes():
 
     return jsonify({'resumes': resume_list}), 200
 
-@app.route('/resumes', methods=['GET'])
+@app.route('/comments-and-ratings', methods=['POST'])
 @token_required
-def get_resumes(current_user):
-    resumes = session.query(Resumes).filter_by(user_id_fkey=current_user.user_id).all()
+def add_comment_and_rating(current_user):
+    comment = request.json['comment']
+    rating = request.json['rating']
+    user_id_fkey = current_user.user_id
+    resume_id = request.json['resumeId']
 
-    resume_list = []
-    for resume in resumes:
-        resume_dict = {
-            'resume_id': resume.resume_id,
-            'filename': resume.filename,
-            'resume': resume.resume,
-        }
-        resume_list.append(resume_dict)
+    new_comment_and_rating = CommentsAndRatings(
+        comment=comment,
+        rating=rating, 
+        user_id_fkey=user_id_fkey,
+        resume_id_fkey=resume_id
+        )
+    session.add(new_comment_and_rating)
+    session.commit()
 
-    return jsonify({'resumes': resume_list})
+    return {'message': 'Comment and rating added successfully'}, 200
 
-@app.route('/resumes/<int:resume_id>', methods=['GET'])
-def get_resume(current_user, resume_id):
-    resume = session.query(Resumes).filter_by(resume_id=resume_id, user_id_fkey=current_user.user_id).first()
-
-    if not resume:
-        return jsonify({'error': 'Resume not found'}), 404
-
-    return send_file(BytesIO(resume.file_data), attachment_filename=resume.filename, mimetype=resume.content_type)
+@app.route('/comments-and-ratings/<int:resume_id>')
+def get_comments_and_ratings(resume_id):
+    comments_and_ratings = session.query(CommentsAndRatings).filter_by(resume_id_fkey=resume_id).all()
+    if comments_and_ratings:
+        comments = [c.comment for c in comments_and_ratings]
+        ratings = [c.rating for c in comments_and_ratings]
+        return jsonify({'comments': comments, 'ratings': ratings})
+    else:
+        return jsonify({'error': f'Resume with ID {resume_id} not found'}), 404

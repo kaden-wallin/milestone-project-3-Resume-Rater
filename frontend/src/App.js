@@ -6,6 +6,7 @@ import RegisterForm from './components/register';
 import ResumeUploader from './components/resumeUploader';
 import ViewResume from './components/resumeViewer';
 import SearchResumes from './components/searchResumes';
+import './App.css';
 
 function App() {
     const [user, setUser] = useState(null)
@@ -17,7 +18,7 @@ function App() {
                 <Route path="/login" element={<LoginForm setUser={setUser} />} />
                 <Route path="/register" element={<RegisterForm setUser={setUser} />} />
                 <Route path="/resume-uploader" element={<ResumeUploader user={user} />} />
-                <Route path="/resumes/:resumeId" element={<ViewResume />} />
+                <Route path="/resumes/:resumeId" element={<ViewResume user={user} />} />
                 <Route path="/resumes/search" elemt={<SearchResumes />} />
             </Routes>
         </BrowserRouter>

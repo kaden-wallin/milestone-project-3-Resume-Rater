@@ -2,10 +2,11 @@ import React from "react"
 import { useNavigate } from "react-router-dom"
 import setAuthToken from './setAuthToken'
 import SearchResumes from "./searchResumes";
+import { buttonStyles, buttonStyles2, containerStyles, titleStyle, titleStyle2 } from './styles';
 
 const Home = ({ user, setUser }) => {
     const navigate = useNavigate()
-    
+
     const handleLogin = () => {
         navigate("/login")
     }
@@ -21,10 +22,6 @@ const Home = ({ user, setUser }) => {
     const handleLogout = () => {
         setUser(null)
         localStorage.removeItem("access_token")
-    }
-
-    const handleResumes = () => {
-        navigate("/resumes")
     }
 
     const handleSearch = async (searchKeywords) => {
@@ -44,28 +41,29 @@ const Home = ({ user, setUser }) => {
     const isAuthenticated = user && localStorage.getItem("access_token")
 
     return (
-        <>
+        <div style={containerStyles} >
             {isAuthenticated ? (
             <div>
-                <h1>Welcome to Rotten Resumes</h1>
+                <h1 style={titleStyle}>Rotten</h1>
+                <h1 style={titleStyle2}>Resumes</h1>
                 <div>
-                    <button onClick={handleLogout}>Logout</button>
-                    <button onClick={handleResumeUpload}>Upload Resume</button>
-                    <button onClick={handleResumes}>See Resumes</button>
+                    <button style={buttonStyles2} onClick={handleLogout}>Logout</button>
+                    <button style={buttonStyles} onClick={handleResumeUpload}>Upload Resume</button>
                 </div>
                 <SearchResumes handleSearch={handleSearch} />
             </div>
             ) : (
                 <div>
-                <h1>Welcome to Rotten Resumes</h1>
+                <h1 style={titleStyle}>Rotten</h1>
+                <h1 style={titleStyle2}>Resumes</h1>
                 <div>
-                    <button onClick={handleLogin}>Login</button>
-                    <button onClick={handleRegister}>Register</button>
+                    <button style={buttonStyles2} onClick={handleLogin}>Login</button>
+                    <button style={buttonStyles} onClick={handleRegister}>Register</button>
                 </div>
                 <SearchResumes handleSearch={handleSearch} />
             </div>
             )}
-        </>
+        </div>
     );
 };
 

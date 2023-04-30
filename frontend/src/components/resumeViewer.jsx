@@ -1,18 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import FileViewer from 'react-file-viewer';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import FileViewer from 'react-file-viewer'
+import CommentsAndRatings from './commentsAndRatings'
+import axios from 'axios'
+import { spaceStyles, docxStyle, containerStyles2, buttonStyles, letteringStyle, commentStyle, ratingStyle, buttonStyles2 } from './styles'
 
-function ViewResume() {
-    const { resumeId } = useParams();
-    const [fileUrl, setFileUrl] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [fileType, setFileType] = useState('');
-    const navigate = useNavigate();
+function ViewResume({ user }) {
+    const { resumeId } = useParams()
+    const [fileUrl, setFileUrl] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [fileType, setFileType] = useState('')
+    const [comments, setComments] = useState([])
+    const [ratings, setRatings] = useState([])
+    const [isMobile, setIsMobile] = useState(false)
+    const navigate = useNavigate()
+
 
     const home = () => {
-        navigate('/');
-    };
+        navigate('/')
+    }
+
+    const isAuthenticated = user && localStorage.getItem("access_token")
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 600px)')
+
+        const handleMediaQueryChange = (e) => {
+            setIsMobile(e.matches)
+        }
+
+        setIsMobile(mediaQuery.matches)
+
+        mediaQuery.addListener(handleMediaQueryChange)
+
+        return () => {
+            mediaQuery.removeListener(handleMediaQueryChange)
+        }
+    }, [])
+
+    const styles = isMobile ? containerStyles2 : docxStyle
 
     useEffect(() => {
         axios
@@ -20,55 +46,118 @@ function ViewResume() {
             .then((response) => {
                 const file = response.data;
                 const binaryString = window.atob(file.url.split(',')[1]);
-                const bytes = new Uint8Array(binaryString.length);
+                const bytes = new Uint8Array(binaryString.length)
                 for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
+                    bytes[i] = binaryString.charCodeAt(i)
                 }
-                const blob = new Blob([bytes], { type: 'application/octet-stream' });
-                const url = URL.createObjectURL(blob);
-                setFileUrl(url);
-                setLoading(false);
-                const extension = file.filename.split('.').pop().toLowerCase();
+                const blob = new Blob([bytes], { type: 'application/octet-stream' })
+                const url = URL.createObjectURL(blob)
+                setFileUrl(url)
+                setLoading(false)
+                const extension = file.filename.split('.').pop().toLowerCase()
                 switch (extension) {
                     case 'pdf':
-                        setFileType('pdf');
+                        setFileType('pdf')
                         break;
                     case 'doc':
                     case 'docx':
-                        setFileType('docx');
+                        setFileType('docx')
                         break;
                     case 'txt':
-                        setFileType('txt');
+                        setFileType('txt')
                         break;
                     default:
-                        setFileType('');
+                        setFileType('')
                 }
             })
             .catch((error) => {
-                console.error(`Fetch error: ${error}`);
-            });
-    }, [resumeId]);
+                console.error(`Fetch error: ${error}`)
+            })
+    }, [resumeId])
+
+    useEffect(() => {
+        axios
+            .get(`http://localhost:5000/comments-and-ratings/${resumeId}`)
+            .then((response) => {
+                setComments(response.data.comments)
+                setRatings(response.data.ratings)
+            })
+            .catch((error) => {
+                console.error(`Fetch error: ${error}`)
+            })
+    }, [resumeId])
 
     const CustomErrorComponent = ({ error }) => {
         const message =
-            error && error.message ? error.message : 'Failed to load file';
-        return <div>{message}</div>;
+            error && error.message ? error.message : 'Failed to load file'
+        return <div>{message}</div>
     };
 
     return (
-        <div>
-            {loading && <p>Loading...</p>}
-            {!loading && fileType && (
-                <FileViewer
-                    fileType={fileType}
-                    filePath={fileUrl}
-                    errorComponent={CustomErrorComponent}
-                />
+        <div style={styles}>
+            {isAuthenticated ? (
+                <div>
+                    {loading && <p style={letteringStyle}>Loading...</p>}
+                    {!loading && fileType && (
+                        <div >
+                            <FileViewer
+                                fileType={fileType}
+                                filePath={fileUrl}
+                                errorComponent={CustomErrorComponent}
+                            />
+                        </div>
+                    )}
+                    {!loading && !fileType && <p>Unsupported file type</p>}
+                    <CommentsAndRatings resumeId={resumeId} />
+                    {comments.length === 0 && ratings.length === 0 ? (
+                        <p style={letteringStyle}>No comments or ratings to display</p>
+                    ) : (
+                        <div style={spaceStyles}>
+                            <h1 style={commentStyle}>Comments</h1>
+                            <h1 style={ratingStyle}>and Ratings</h1>
+                            {comments.map((comment, index) => (
+                                <span key={index} style={buttonStyles}>
+                                    {comment} - {ratings[index]} stars
+                                </span>
+                            ))}
+                            <button style={buttonStyles2} onClick={home}>Back</button>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div>
+                    {loading && <p style={letteringStyle}>Loading...</p>}
+                    {!loading && fileType && (
+                        <div >
+                            <FileViewer
+                                fileType={fileType}
+                                filePath={fileUrl}
+                                errorComponent={CustomErrorComponent}
+                            />
+                            <br></br>
+                        </div>
+                    )}
+                    {!loading && !fileType && <p>Unsupported file type</p>}
+                    {comments.length === 0 && ratings.length === 0 ? (
+                        <p style={letteringStyle}>No comments or ratings to display</p>
+                    ) : (
+                        <div style={spaceStyles}>
+                            <h1 style={commentStyle}>Comments</h1>
+                            <h1 style={ratingStyle}>and Ratings</h1>
+                            {comments.map((comment, index) => (
+                                <span key={index} style={buttonStyles}>
+                                    {comment} - {ratings[index]} <span style={{color: 'rgb(47, 115, 182)'}}>stars</span>
+                                    <br></br>
+                                </span>
+
+                            ))}
+                            <button style={buttonStyles2} onClick={home}>Back</button>
+                        </div>
+                    )}
+                </div>
             )}
-            {!loading && !fileType && <p>Unsupported file type</p>}
-            <button onClick={home}>Back</button>
         </div>
-    );
+    )
 }
 
-export default ViewResume;
+export default ViewResume
