@@ -10,11 +10,11 @@ function ViewResume({ user }) {
     const [fileUrl, setFileUrl] = useState(null)
     const [loading, setLoading] = useState(true)
     const [fileType, setFileType] = useState('')
-    const [comments, setComments] = useState([])
-    const [ratings, setRatings] = useState([])
+    const [commentsAndRatings, setCommentsAndRatings] = useState([])
     const [isMobile, setIsMobile] = useState(false)
     const navigate = useNavigate()
 
+    const color = {color: 'rgb(47, 115, 182)'}
 
     const home = () => {
         navigate('/')
@@ -79,17 +79,21 @@ function ViewResume({ user }) {
         axios
             .get(`http://localhost:5000/comments-and-ratings/${resumeId}`)
             .then((response) => {
-                setComments(response.data.comments)
-                setRatings(response.data.ratings)
+                const { comments, ratings, usernames } = response.data;
+                const commentsAndRatings = comments.map((comment, index) => ({
+                    comment,
+                    rating: ratings[index],
+                    username: usernames[index],
+                }));
+                setCommentsAndRatings(commentsAndRatings);
             })
             .catch((error) => {
-                console.error(`Fetch error: ${error}`)
-            })
+                console.error(`Fetch error: ${error}`);
+            });
     }, [resumeId])
 
     const CustomErrorComponent = ({ error }) => {
-        const message =
-            error && error.message ? error.message : 'Failed to load file'
+        const message = error && error.message ? error.message : 'Failed to load file'
         return <div>{message}</div>
     };
 
@@ -99,7 +103,7 @@ function ViewResume({ user }) {
                 <div>
                     {loading && <p style={letteringStyle}>Loading...</p>}
                     {!loading && fileType && (
-                        <div >
+                        <div>
                             <FileViewer
                                 fileType={fileType}
                                 filePath={fileUrl}
@@ -109,15 +113,15 @@ function ViewResume({ user }) {
                     )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     <CommentsAndRatings resumeId={resumeId} />
-                    {comments.length === 0 && ratings.length === 0 ? (
+                    {commentsAndRatings.length === 0 ? (
                         <p style={letteringStyle}>No comments or ratings to display</p>
                     ) : (
                         <div style={spaceStyles}>
                             <h1 style={commentStyle}>Comments</h1>
                             <h1 style={ratingStyle}>and Ratings</h1>
-                            {comments.map((comment, index) => (
+                            {commentsAndRatings.map(({ comment, rating, username }, index) => (
                                 <span key={index} style={buttonStyles}>
-                                    {comment} - {ratings[index]} stars
+                                    {comment} - {rating} stars ({username})
                                 </span>
                             ))}
                             <button style={buttonStyles2} onClick={home}>Back</button>
@@ -128,7 +132,7 @@ function ViewResume({ user }) {
                 <div>
                     {loading && <p style={letteringStyle}>Loading...</p>}
                     {!loading && fileType && (
-                        <div >
+                        <div>
                             <FileViewer
                                 fileType={fileType}
                                 filePath={fileUrl}
@@ -138,18 +142,19 @@ function ViewResume({ user }) {
                         </div>
                     )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
-                    {comments.length === 0 && ratings.length === 0 ? (
-                        <p style={letteringStyle}>No comments or ratings to display</p>
+                    {commentsAndRatings.length === 0 ? (
+                        <div>
+                            <p style={letteringStyle}>No comments or ratings to display</p>
+                            <button style={buttonStyles2} onClick={home}>Back</button>
+                        </div>
                     ) : (
                         <div style={spaceStyles}>
                             <h1 style={commentStyle}>Comments</h1>
                             <h1 style={ratingStyle}>and Ratings</h1>
-                            {comments.map((comment, index) => (
+                            {commentsAndRatings.map(({ comment, rating, username }, index) => (
                                 <span key={index} style={buttonStyles}>
-                                    {comment} - {ratings[index]} <span style={{color: 'rgb(47, 115, 182)'}}>stars</span>
-                                    <br></br>
+                                    {comment} <span style={color}>-</span> {rating} star(s) says <span style={color}>{username}</span>
                                 </span>
-
                             ))}
                             <button style={buttonStyles2} onClick={home}>Back</button>
                         </div>
