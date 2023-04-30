@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 import setAuthToken from './setAuthToken'
-import { buttonStyles, buttonStylesCR } from './styles';
+import { buttonStyles, letteringStyle } from './styles';
 
 function CommentsAndRatings({ resumeId }) {
     const [comment, setComment] = useState('')
@@ -42,7 +42,7 @@ function CommentsAndRatings({ resumeId }) {
 
     return (
         <div>
-            <form style={buttonStylesCR} onSubmit={handleSubmit}>
+            <form style={letteringStyle} onSubmit={handleSubmit}>
                 <label>
                     Comment:
                     <input type="text" style={buttonStyles} value={comment} onChange={handleCommentChange} />

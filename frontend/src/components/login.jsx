@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { titleStyle, buttonStyles, buttonStylesCR, containerStyles } from "./styles";
+import { errorStyle, buttonStyles2, titleStyle2, titleStyle, buttonStyles, letteringStyle, containerStyles } from "./styles";
 
 const LoginForm = ({ setUser }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState(null)
     const navigate = useNavigate()
 
     const handleSubmit = async (event) => {
@@ -21,7 +22,7 @@ const LoginForm = ({ setUser }) => {
             localStorage.setItem('access_token', response.data.user.access_token)
             navigate('/')
         } catch (error) {
-            console.error(error)
+            setErrorMessage('Email or password incorrect')
         }
     }
 
@@ -35,11 +36,14 @@ const LoginForm = ({ setUser }) => {
 
     return (
         <div style={containerStyles}>
-            <h1 style={titleStyle} >Login</h1>
-            <form style={buttonStylesCR} onSubmit={handleSubmit}>
+            <h1 style={titleStyle}>Login here</h1>
+            <h1 style={titleStyle2}> and Critic</h1>
+            {errorMessage && <p style={errorStyle}>{errorMessage}</p>}
+            <form style={letteringStyle} onSubmit={handleSubmit}>
                 
                 <label htmlFor="email">Email</label>
                 <input
+                    placeholder="example@email.com"
                     style={buttonStyles}
                     type="email"
                     name="email"
@@ -50,6 +54,7 @@ const LoginForm = ({ setUser }) => {
                 <br></br>
                 <label htmlFor="password">Password</label>
                 <input
+                    placeholder="password123"
                     style={buttonStyles}
                     type="password"
                     name="password"
@@ -57,10 +62,9 @@ const LoginForm = ({ setUser }) => {
                     required
                     onChange={(event) => setPassword(event.target.value)}
                 />
-                <br></br>
-                <button style={buttonStyles} type="submit">Log in</button>
+                <button style={buttonStyles2} type="submit">Log in</button>
                 <p>New? Register here</p>
-                <button style={buttonStyles} onClick={register}>Register</button>
+                <button style={buttonStyles2} onClick={register}>Register</button>
                 <button style={buttonStyles} onClick={home}>Back</button>
             </form>
         </div>

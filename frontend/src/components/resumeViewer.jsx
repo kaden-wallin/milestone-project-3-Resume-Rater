@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import FileViewer from 'react-file-viewer'
 import CommentsAndRatings from './commentsAndRatings'
 import axios from 'axios'
-import { docxStyle, buttonStyles, buttonStylesCR } from './styles'
+import { spaceStyles, docxStyle, containerStyles2, buttonStyles, letteringStyle, commentStyle, ratingStyle, buttonStyles2 } from './styles'
 
 function ViewResume({ user }) {
     const { resumeId } = useParams()
@@ -12,6 +12,7 @@ function ViewResume({ user }) {
     const [fileType, setFileType] = useState('')
     const [comments, setComments] = useState([])
     const [ratings, setRatings] = useState([])
+    const [isMobile, setIsMobile] = useState(false)
     const navigate = useNavigate()
 
 
@@ -20,6 +21,24 @@ function ViewResume({ user }) {
     }
 
     const isAuthenticated = user && localStorage.getItem("access_token")
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(min-width: 600px)')
+
+        const handleMediaQueryChange = (e) => {
+            setIsMobile(e.matches)
+        }
+
+        setIsMobile(mediaQuery.matches)
+
+        mediaQuery.addListener(handleMediaQueryChange)
+
+        return () => {
+            mediaQuery.removeListener(handleMediaQueryChange)
+        }
+    }, [])
+
+    const styles = isMobile ? containerStyles2 : docxStyle
 
     useEffect(() => {
         axios
@@ -75,12 +94,12 @@ function ViewResume({ user }) {
     };
 
     return (
-        <div style={docxStyle}>
+        <div style={styles}>
             {isAuthenticated ? (
                 <div>
-                    {loading && <p style={buttonStylesCR}>Loading...</p>}
+                    {loading && <p style={letteringStyle}>Loading...</p>}
                     {!loading && fileType && (
-                        <div > 
+                        <div >
                             <FileViewer
                                 fileType={fileType}
                                 filePath={fileUrl}
@@ -90,24 +109,26 @@ function ViewResume({ user }) {
                     )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     <CommentsAndRatings resumeId={resumeId} />
-                    { comments.length === 0 && ratings.length === 0 ? (
-                        <p style={buttonStylesCR}>No comments or ratings to display</p>
+                    {comments.length === 0 && ratings.length === 0 ? (
+                        <p style={letteringStyle}>No comments or ratings to display</p>
                     ) : (
-                    <div style={buttonStyles}>
-                        {comments.map((comment, index) => (
-                            <span key={index}>
-                                {comment} - {ratings[index]} stars
-                            </span>
-                        ))}
-                    </div>
+                        <div style={spaceStyles}>
+                            <h1 style={commentStyle}>Comments</h1>
+                            <h1 style={ratingStyle}>and Ratings</h1>
+                            {comments.map((comment, index) => (
+                                <span key={index} style={buttonStyles}>
+                                    {comment} - {ratings[index]} stars
+                                </span>
+                            ))}
+                            <button style={buttonStyles2} onClick={home}>Back</button>
+                        </div>
                     )}
-                    <button style={buttonStyles} onClick={home}>Back</button>
                 </div>
             ) : (
                 <div>
-                    {loading && <p style={buttonStylesCR}>Loading...</p>}
+                    {loading && <p style={letteringStyle}>Loading...</p>}
                     {!loading && fileType && (
-                        <div > 
+                        <div >
                             <FileViewer
                                 fileType={fileType}
                                 filePath={fileUrl}
@@ -117,20 +138,22 @@ function ViewResume({ user }) {
                         </div>
                     )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
-                    { comments.length === 0 && ratings.length === 0 ? (
-                        <p style={buttonStylesCR}>No comments or ratings to display</p>
+                    {comments.length === 0 && ratings.length === 0 ? (
+                        <p style={letteringStyle}>No comments or ratings to display</p>
                     ) : (
-                    <div style={buttonStyles}>
-                        {comments.map((comment, index) => (
-                            <span key={index}>
-                                {comment} - {ratings[index]} stars
-                                <br></br>
-                            </span>
-                        ))}
-                    </div>
+                        <div style={spaceStyles}>
+                            <h1 style={commentStyle}>Comments</h1>
+                            <h1 style={ratingStyle}>and Ratings</h1>
+                            {comments.map((comment, index) => (
+                                <span key={index} style={buttonStyles}>
+                                    {comment} - {ratings[index]} <span style={{color: 'rgb(47, 115, 182)'}}>stars</span>
+                                    <br></br>
+                                </span>
+
+                            ))}
+                            <button style={buttonStyles2} onClick={home}>Back</button>
+                        </div>
                     )}
-                    <br></br>
-                    <button style={buttonStyles} onClick={home}>Back</button>
                 </div>
             )}
         </div>
