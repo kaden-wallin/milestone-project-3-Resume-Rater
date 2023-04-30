@@ -43,11 +43,26 @@ export const titleStyle = {
 }
 
 export const docxStyle = {
-    fontSize: "7px",
     margin: '10px',
+    fontSize: '7px',
 }
 
 export const buttonStylesCR = {
     fontWeight: 'bold',
     fontSize: '20px',
+}
+
+export const buttonStylesCD = {
+    fontWeight: 'bold',
+    fontSize: '20px',
+    width: '10%'
+}
+
+export const uploadStyle = {
+    fontWeight: 'bold',
+    fontSize: '20px',
+    borderStyle: 'dashed',
+    borderColor: 'rgb(200, 215, 400)',
+    backgroundColor: 'white',
+    padding: '20px'
 }

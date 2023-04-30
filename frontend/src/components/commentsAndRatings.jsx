@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router';
 import axios from 'axios';
 import setAuthToken from './setAuthToken'
 import { buttonStyles, buttonStylesCR } from './styles';
@@ -6,6 +7,7 @@ import { buttonStyles, buttonStylesCR } from './styles';
 function CommentsAndRatings({ resumeId }) {
     const [comment, setComment] = useState('')
     const [rating, setRating] = useState(0)
+    const navigate = useNavigate()
 
     const handleCommentChange = (event) => {
         setComment(event.target.value)
@@ -35,6 +37,7 @@ function CommentsAndRatings({ resumeId }) {
             .catch(error => {
                 console.error(error)
             })
+            navigate('/')
     }
 
     return (

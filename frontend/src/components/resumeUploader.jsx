@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Dropzone from 'react-dropzone'
 import setAuthToken from './setAuthToken'
+import { uploadStyle, buttonStyles, buttonStylesCR, containerStyles, titleStyle } from './styles'
 
 const ResumeUploader = ({ user }) => {
   const [file, setFile] = useState(null)
@@ -44,23 +45,23 @@ const ResumeUploader = ({ user }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Upload a Resume</h1>
+    <form style={containerStyles} onSubmit={handleSubmit}>
+      <h1 style={titleStyle}>Upload a Resume</h1>
       <Dropzone onDrop={handleFileDrop}>
         {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()}>
             <input {...getInputProps()} />
-            <p>
+            <p style={uploadStyle}>
               Drag and drop your resume file here or click to select a file (only pdf, doc, and docx types supported)
             </p>
-            {file && <p>Selected file: {file.name}</p>}
+            {file && <p style={buttonStylesCR} >Selected file: {file.name}</p>}
           </div>
         )}
       </Dropzone>
-      <button type="submit" disabled={!file}>
+      <button style={buttonStyles} type="submit" disabled={!file}>
         Upload Resume
       </button>
-      <button onClick={home}>Back</button>
+      <button style={buttonStyles} onClick={home}>Back</button>
     </form>
   )
 }

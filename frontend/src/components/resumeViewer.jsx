@@ -124,6 +124,7 @@ function ViewResume({ user }) {
                         {comments.map((comment, index) => (
                             <span key={index}>
                                 {comment} - {ratings[index]} stars
+                                <br></br>
                             </span>
                         ))}
                     </div>
