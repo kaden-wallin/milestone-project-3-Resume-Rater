@@ -26,7 +26,7 @@ const Home = ({ user, setUser }) => {
 
     const handleSearch = async (searchKeywords) => {
         try {
-          const response = await fetch(`http://localhost:5000/search-resumes/${searchKeywords}`);
+          const response = await fetch(`/api/search-resumes/${searchKeywords}`);
           const searchResults = await response.json();
           navigate("/search-results", { state: { searchResults } });
         } catch (error) {
