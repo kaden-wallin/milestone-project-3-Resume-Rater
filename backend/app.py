@@ -138,7 +138,7 @@ def logout():
     return response
 
 
-# Everything passed this point is resume routes
+# gonna make atleast two different route files to hold all of these routes
 @app.route('/upload-resume', methods=['POST'])
 @token_required
 def upload_resume(current_user):
