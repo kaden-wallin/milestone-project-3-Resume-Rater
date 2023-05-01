@@ -25,7 +25,7 @@ function SearchResumes() {
     return (
         <div>
             <form onSubmit={handleSearch}>
-                <input style={buttonStyles} placeholder="Input keyword here" type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
+                <input style={buttonStyles} placeholder="Find revelant keywords in resumes" type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
                 <button style={buttonStyles2} type="submit">Search</button>
             </form>
             {loading && <p style={letteringStyle}>Loading...</p>}
