@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'https://rotten-resumes-backend.vercel.app/',
+            target: 'https://rotten-resumes-backend.azurewebsites.net',
             changeOrigin: true,
         })
     );
