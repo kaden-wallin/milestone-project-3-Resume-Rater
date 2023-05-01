@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'https://rotten-resumes-backend.azurewebsites.net',
+            target: 'https://localhost:5000',
             changeOrigin: true,
         })
     );
