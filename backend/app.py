@@ -10,6 +10,7 @@ from routesresume import resume_bp
 from routesfeedback import feedback_bp
 import os
 
+CORS_URL = os.getenv("CORS_URL")
 
 load_dotenv()
 

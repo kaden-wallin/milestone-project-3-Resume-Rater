@@ -1,0 +1,18 @@
+{
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/app.py"
+      }
+    ],
+    "env": {
+      "VERCEL_ENV": "production"
+    },
+    "builds": [
+      {
+        "src": "/app.py",
+        "use": "@vercel/python"
+      }
+    ]
+  }
+  
