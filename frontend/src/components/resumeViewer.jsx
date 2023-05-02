@@ -109,6 +109,7 @@ function ViewResume({ user }) {
                     <CommentsAndRatings resumeId={resumeId} />
                     {commentsAndRatings.length === 0 ? (
                         <p style={letteringStyle}>No comments or ratings to display</p>
+                        <button style={buttonStyles2} onClick={home}>Back</button>
                     ) : (
                         <div style={spaceStyles}>
                             <h1 style={commentStyle}>Comments</h1>
