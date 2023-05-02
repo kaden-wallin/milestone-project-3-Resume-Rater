@@ -22,7 +22,7 @@ const RegisterForm = ({ setUser }) => {
         event.preventDefault()
 
         try {
-            const response = await axios.post("http://rottenresumes.pythonanywhere.com/api/register", {
+            const response = await axios.post("https://rottenresumes.pythonanywhere.com/api/register", {
                 username,
                 email,
                 password,

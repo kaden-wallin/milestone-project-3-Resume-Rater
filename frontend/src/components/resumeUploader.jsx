@@ -36,7 +36,7 @@ const ResumeUploader = ({ user }) => {
 
 		try {
 			const response = await axios.post(
-				'http://rottenresumes.pythonanywhere.com/api/upload-resume',
+				'https://rottenresumes.pythonanywhere.com/api/upload-resume',
 				formData,
 				{
 					headers: { 'Content-Type': 'multipart/form-data' },
