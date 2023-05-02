@@ -21,7 +21,7 @@ const LoginForm = ({ setUser }) => {
         event.preventDefault()
 
         try {
-            const response = await axios.post("rottenresumes.pythonanywhere.com/api/login", {
+            const response = await axios.post("http://rottenresumes.pythonanywhere.com/api/login", {
                 email,
                 password
             })

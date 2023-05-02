@@ -22,7 +22,7 @@ function CommentsAndRatings({ resumeId }) {
 
         setAuthToken(localStorage.getItem('access_token'))
 
-        axios.post('rottenresumes.pythonanywhere.com/api/comments-and-ratings', {
+        axios.post('http://rottenresumes.pythonanywhere.com/api/comments-and-ratings', {
             comment: comment,
             rating: rating,
             resumeId: resumeId
