@@ -13,7 +13,7 @@ function SearchResumes() {
         event.preventDefault()
         setLoading(true)
         try {
-            const response = await axios.get(`/api/search-resumes?keyword=${searchTerm}`)
+            const response = await axios.get(`http://localhost:5000/api/search-resumes?keyword=${searchTerm}`)
             setSearchResults(response.data.resumes)
             setLoading(false)
         } catch (error) {

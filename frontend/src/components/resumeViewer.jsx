@@ -42,7 +42,7 @@ function ViewResume({ user }) {
 
     useEffect(() => {
         axios
-            .get(`/api/download-resume/${resumeId}`)
+            .get(`http://localhost:5000/api/download-resume/${resumeId}`)
             .then((response) => {
                 const file = response.data;
                 const binaryString = window.atob(file.url.split(',')[1]);
@@ -77,7 +77,7 @@ function ViewResume({ user }) {
 
     useEffect(() => {
         axios
-            .get(`/api/comments-and-ratings/${resumeId}`)
+            .get(`http://localhost:5000/api/comments-and-ratings/${resumeId}`)
             .then((response) => {
                 const { comments, ratings, usernames } = response.data;
                 const commentsAndRatings = comments.map((comment, index) => ({

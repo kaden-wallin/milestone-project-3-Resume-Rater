@@ -14,7 +14,7 @@ const RegisterForm = ({ setUser }) => {
         event.preventDefault()
 
         try {
-            const response = await axios.post("/api/register", {
+            const response = await axios.post("http://localhost:5000/api/register", {
                 username,
                 email,
                 password,
