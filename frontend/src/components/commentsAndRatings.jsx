@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 import setAuthToken from './setAuthToken'
-import { buttonStyles, letteringStyle } from './styles';
+import { buttonStyles, letteringStyle } from '../styles';
 
 function CommentsAndRatings({ resumeId }) {
     const [comment, setComment] = useState('')
@@ -22,7 +22,7 @@ function CommentsAndRatings({ resumeId }) {
 
         setAuthToken(localStorage.getItem('access_token'))
 
-        axios.post('http://localhost:5000/api/comments-and-ratings', {
+        axios.post('rottenresumes.pythonanywhere.com/api/comments-and-ratings', {
             comment: comment,
             rating: rating,
             resumeId: resumeId

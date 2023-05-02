@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { errorStyle, buttonStyles2, titleStyle2, titleStyle, buttonStyles, letteringStyle, containerStyles } from "./styles";
+import { 
+    errorStyle, 
+    buttonStyles2, 
+    titleStyleBottom, 
+    titleStyleTop, 
+    buttonStyles, 
+    letteringStyle, 
+    containerStyles 
+} from "../styles";
 
 const LoginForm = ({ setUser }) => {
     const [email, setEmail] = useState('')
@@ -13,7 +21,7 @@ const LoginForm = ({ setUser }) => {
         event.preventDefault()
 
         try {
-            const response = await axios.post("http://localhost:5000/api/login", {
+            const response = await axios.post("rottenresumes.pythonanywhere.com/api/login", {
                 email,
                 password
             })
@@ -36,8 +44,8 @@ const LoginForm = ({ setUser }) => {
 
     return (
         <div style={containerStyles}>
-            <h1 style={titleStyle}>Login here</h1>
-            <h1 style={titleStyle2}> and Critic</h1>
+            <h1 style={titleStyleTop}>Login here</h1>
+            <h1 style={titleStyleBottom}> and Critique</h1>
             {errorMessage && <p style={errorStyle}>{errorMessage}</p>}
             <form style={letteringStyle} onSubmit={handleSubmit}>
                 

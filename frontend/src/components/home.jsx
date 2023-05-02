@@ -2,7 +2,16 @@ import React from "react"
 import { useNavigate } from "react-router-dom"
 import setAuthToken from './setAuthToken'
 import SearchResumes from "./searchResumes";
-import { buttonStyles, buttonStyles2, containerStyles, titleStyle, titleStyle2 } from './styles';
+import IsMobile from "../styles";
+import { 
+    buttonStyles,
+    buttonStyles2, 
+    containerStyles, 
+    titleStyleTop, 
+    titleStyleTopM, 
+    titleStyleBottom,
+    titleStyleBottomM 
+} from '../styles';
 
 const Home = ({ user, setUser }) => {
     const navigate = useNavigate()
@@ -26,13 +35,18 @@ const Home = ({ user, setUser }) => {
 
     const handleSearch = async (searchKeywords) => {
         try {
-          const response = await fetch(`http://localhost:5000/api/search-resumes/${searchKeywords}`);
+          const response = await fetch(`rottenresumes.pythonanywhere.com/api/search-resumes/${searchKeywords}`);
           const searchResults = await response.json();
           navigate("/search-results", { state: { searchResults } });
         } catch (error) {
           console.error(error);
         }
     };
+
+    const isMobile = IsMobile()
+
+    const titleTop = isMobile ? titleStyleTop : titleStyleTopM
+    const titleBottom = isMobile ? titleStyleBottom : titleStyleBottomM
 
     window.addEventListener('load', () => {
         setAuthToken(localStorage.getItem('access_token'))
@@ -44,8 +58,8 @@ const Home = ({ user, setUser }) => {
         <div style={containerStyles} >
             {isAuthenticated ? (
             <div>
-                <h1 style={titleStyle}>Rotten</h1>
-                <h1 style={titleStyle2}>Resumes</h1>
+                <h1 style={titleTop}>Rotten</h1>
+                <h1 style={titleBottom}>Resumes</h1>
                 <div>
                     <button style={buttonStyles2} onClick={handleLogout}>Logout</button>
                     <button style={buttonStyles} onClick={handleResumeUpload}>Upload Resume</button>
@@ -54,8 +68,8 @@ const Home = ({ user, setUser }) => {
             </div>
             ) : (
                 <div>
-                <h1 style={titleStyle}>Rotten</h1>
-                <h1 style={titleStyle2}>Resumes</h1>
+                <h1 style={titleTop}>Rotten</h1>
+                <h1 style={titleBottom}>Resumes</h1>
                 <div>
                     <button style={buttonStyles2} onClick={handleLogin}>Login</button>
                     <button style={buttonStyles} onClick={handleRegister}>Register</button>

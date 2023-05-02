@@ -3,7 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Dropzone from 'react-dropzone'
 import setAuthToken from './setAuthToken'
-import { uploadStyle, buttonStyles, letteringStyle, containerStyles, titleStyle, titleStyle2, errorStyle } from './styles'
+import { 
+	uploadStyle, 
+	buttonStyles, 
+	letteringStyle, 
+	containerStyles, 
+	titleStyleTop, 
+	titleStyleBottom, 
+	errorStyle 
+} from '../styles'
 
 const ResumeUploader = ({ user }) => {
 	const [file, setFile] = useState(null)
@@ -28,7 +36,7 @@ const ResumeUploader = ({ user }) => {
 
 		try {
 			const response = await axios.post(
-				'http://localhost:5000/api/upload-resume',
+				'rottenresumes.pythonanywhere.com/api/upload-resume',
 				formData,
 				{
 					headers: { 'Content-Type': 'multipart/form-data' },
@@ -47,8 +55,8 @@ const ResumeUploader = ({ user }) => {
 
 	return (
 		<form style={containerStyles} onSubmit={handleSubmit}>
-			<h1 style={titleStyle}>Upload </h1>
-			<h1 style={titleStyle2}>a Resume</h1>
+			<h1 style={titleStyleTop}>Upload </h1>
+			<h1 style={titleStyleBottom}>a Resume</h1>
 			<Dropzone onDrop={handleFileDrop}>
 				{({ getRootProps, getInputProps }) => (
 					<div {...getRootProps()}>

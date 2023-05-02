@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { titleStyle2, titleStyle, buttonStyles, buttonStyles2, letteringStyle, containerStyles, errorStyle } from "./styles";
+import { 
+    titleStyleBottom, 
+    titleStyleTop, 
+    buttonStyles, 
+    buttonStyles2, 
+    letteringStyle, 
+    containerStyles, 
+    errorStyle
+} from "../styles";
 
 const RegisterForm = ({ setUser }) => {
     const [username, setUsername] = useState('')
@@ -14,7 +22,7 @@ const RegisterForm = ({ setUser }) => {
         event.preventDefault()
 
         try {
-            const response = await axios.post("http://localhost:5000/api/register", {
+            const response = await axios.post("rottenresumes.pythonanywhere.com/api/register", {
                 username,
                 email,
                 password,
@@ -38,8 +46,8 @@ const RegisterForm = ({ setUser }) => {
 
     return (
         <div style={containerStyles}>
-            <h1 style={titleStyle}>Register to</h1>
-            <h1 style={titleStyle2}>get Started</h1>
+            <h1 style={titleStyleTop}>Register to</h1>
+            <h1 style={titleStyleBottom}>get Started</h1>
             {errorMessage && <p style={errorStyle}>{errorMessage}</p>}
             <form style={letteringStyle} onSubmit={handleSubmit}>
                 <label htmlFor="username">Username</label>

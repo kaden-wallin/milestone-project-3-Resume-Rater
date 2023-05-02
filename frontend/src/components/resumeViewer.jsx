@@ -3,7 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom'
 import FileViewer from 'react-file-viewer'
 import CommentsAndRatings from './commentsAndRatings'
 import axios from 'axios'
-import { spaceStyles, docxStyle, containerStyles2, buttonStyles, letteringStyle, commentStyle, ratingStyle, buttonStyles2 } from './styles'
+import { 
+    spaceStyles, 
+    docxStyle, 
+    containerStyles2, 
+    buttonStyles, 
+    letteringStyle, 
+    commentStyle, 
+    ratingStyle, 
+    buttonStyles2 
+} from '../styles'
+import IsMobile from '../styles'
 
 function ViewResume({ user }) {
     const { resumeId } = useParams()
@@ -11,10 +21,10 @@ function ViewResume({ user }) {
     const [loading, setLoading] = useState(true)
     const [fileType, setFileType] = useState('')
     const [commentsAndRatings, setCommentsAndRatings] = useState([])
-    const [isMobile, setIsMobile] = useState(false)
     const navigate = useNavigate()
 
     const color = {color: 'rgb(47, 115, 182)'}
+    const isMobile = IsMobile()
 
     const home = () => {
         navigate('/')
@@ -22,27 +32,11 @@ function ViewResume({ user }) {
 
     const isAuthenticated = user && localStorage.getItem("access_token")
 
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(min-width: 600px)')
-
-        const handleMediaQueryChange = (e) => {
-            setIsMobile(e.matches)
-        }
-
-        setIsMobile(mediaQuery.matches)
-
-        mediaQuery.addListener(handleMediaQueryChange)
-
-        return () => {
-            mediaQuery.removeListener(handleMediaQueryChange)
-        }
-    }, [])
-
     const styles = isMobile ? containerStyles2 : docxStyle
 
     useEffect(() => {
         axios
-            .get(`http://localhost:5000/api/download-resume/${resumeId}`)
+            .get(`rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
             .then((response) => {
                 const file = response.data;
                 const binaryString = window.atob(file.url.split(',')[1]);
@@ -77,7 +71,7 @@ function ViewResume({ user }) {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:5000/api/comments-and-ratings/${resumeId}`)
+            .get(`rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
             .then((response) => {
                 const { comments, ratings, usernames } = response.data;
                 const commentsAndRatings = comments.map((comment, index) => ({

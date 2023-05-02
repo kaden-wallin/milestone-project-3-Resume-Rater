@@ -1,7 +1,14 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom"
-import { letteringStyle, buttonStyles, resultStyles, listStyles, buttonStyles2 } from './styles'
+import { 
+    letteringStyle, 
+    buttonStyles, 
+    resultStyles, 
+    listStyles, 
+    buttonStyles2,
+    placeHolderStyles 
+} from '../styles'
 
 function SearchResumes() {
     const navigate = useNavigate()
@@ -13,7 +20,7 @@ function SearchResumes() {
         event.preventDefault()
         setLoading(true)
         try {
-            const response = await axios.get(`http://localhost:5000/api/search-resumes?keyword=${searchTerm}`)
+            const response = await axios.get(`rottenresumes.pythonanywhere.com/api/search-resumes?keyword=${searchTerm}`)
             setSearchResults(response.data.resumes)
             setLoading(false)
         } catch (error) {
@@ -25,7 +32,7 @@ function SearchResumes() {
     return (
         <div>
             <form onSubmit={handleSearch}>
-                <input style={buttonStyles} placeholder="Find keywords in resumes" type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
+                <input style={placeHolderStyles} placeholder="Find keywords in resumes" type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
                 <button style={buttonStyles2} type="submit">Search</button>
             </form>
             {loading && <p style={letteringStyle}>Loading...</p>}
