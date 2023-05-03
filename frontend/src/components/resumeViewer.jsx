@@ -36,7 +36,7 @@ function ViewResume({ user }) {
 
     useEffect(() => {
         axios
-            .get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
+            .get(`http://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
             .then((response) => {
                 const file = response.data;
                 const binaryString = window.atob(file.url.split(',')[1]);
@@ -71,7 +71,7 @@ function ViewResume({ user }) {
 
     useEffect(() => {
         axios
-            .get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
+            .get(`http://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
             .then((response) => {
                 const { comments, ratings, usernames } = response.data;
                 const commentsAndRatings = comments.map((comment, index) => ({
