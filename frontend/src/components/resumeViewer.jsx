@@ -108,8 +108,10 @@ function ViewResume({ user }) {
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     <CommentsAndRatings resumeId={resumeId} />
                     {commentsAndRatings.length === 0 ? (
-                        <p style={letteringStyle}>No comments or ratings to display</p>
-                        <button style={buttonStyles2} onClick={home}>Back</button>
+                        <div>
+                            <p style={letteringStyle}>No comments or ratings to display</p>
+                            <button style={buttonStyles2} onClick={home}>Back</button>
+                        </div>
                     ) : (
                         <div style={spaceStyles}>
                             <h1 style={commentStyle}>Comments</h1>
