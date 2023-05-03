@@ -20,7 +20,7 @@ function SearchResumes() {
         event.preventDefault()
         setLoading(true)
         try {
-            const response = await axios.get(`https://rottenresumes.pythonanywhere.com/api/search-resumes?keyword=${searchTerm}`)
+            const response = await axios.get(`http://rottenresumes.pythonanywhere.com/api/search-resumes?keyword=${searchTerm}`)
             setSearchResults(response.data.resumes)
             setLoading(false)
         } catch (error) {
