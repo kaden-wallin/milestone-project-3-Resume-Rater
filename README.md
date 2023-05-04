@@ -32,7 +32,9 @@
         Since the backend is being deployed on pythonanywhere I couldn't really use the repo, so I uploaded the backend file and that is why towards the end there aren't very many commits to the backend. I did, however, add all of the changes made in the pythonanywhere files so you can see what the code looks like in this repo.
 
 ## Issues
-    Currently the main issue is that Resumes can't load in the deployed version of Rotten Resumes, this is due to some conflict that WSGI has with the way I send files but I haven't been able to get to it as most of my time after deploying was trying to figure out the SSL errors. (I am not very experienced with WSGI servers)
+    Currently the main issue is that Resumes can't load in the deployed version of Rotten Resumes, this is due to some conflict that WSGI has with the way I send files but I haven't been able to get to it as most of my time after deploying was trying to figure out the SSL errors. (I am not very experienced with WSGI servers.)
+
+    I should also explain here why I didn't use CSS files for my styling. I could not for the life of me get them to import correctly, this coupled with the fact that I had far more important things on my plate trying to deal with the errors is why it is all inline. Once I had time that I could have tried to fix it there was a whole system in place and I thought it was kind of impressive what I was able to do with inline. Also when I presented I thought that my mobile view was really good but it only was on Edge so I ended up changing it to actually look good. This is why sizes are in different metrics.
 
         Something to note is that in the localhosted flask application, every feature currently implemented works perfectly.
 
