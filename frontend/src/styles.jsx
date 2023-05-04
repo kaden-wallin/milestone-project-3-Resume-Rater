@@ -25,124 +25,240 @@ function IsMobile() {
 export default IsMobile
    
 // Button styles
-export const buttonStyles = {
-    backgroundColor: 'White',
-    border: 'None',
-    color: 'black',
-    margin: '10px',
-    fontSize: '2vw',
-    borderRadius: '15px',
-    fontWeight: 'bold',
-    padding: '10px 20px'
-}
 
-export const buttonStyles2 = {
-    backgroundColor: 'rgb(47, 115, 182)',
-    border: 'None',
-    color: 'white',
-    margin: '10px',
-    fontSize: '2vw',
-    borderRadius: '15px',
-    fontWeight: 'bold',
-    padding: '10px 20px'
-}
+    // Browser
+    export const buttonStyles = {
+        backgroundColor: 'White',
+        border: 'None',
+        color: 'black',
+        margin: '10px',
+        fontSize: '2vw',
+        borderRadius: '15px',
+        fontWeight: 'bold',
+        padding: '10px 20px'
+    }
+
+    export const buttonStyles2 = {
+        backgroundColor: 'rgb(47, 115, 182)',
+        border: 'None',
+        color: 'white',
+        margin: '10px',
+        fontSize: '2vw',
+        borderRadius: '15px',
+        fontWeight: 'bold',
+        padding: '10px 20px'
+    }
+
+    // Mobile
+    export const buttonStylesM = {
+        backgroundColor: 'White',
+        border: 'None',
+        color: 'black',
+        margin: '10px',
+        fontSize: '5vw',
+        borderRadius: '15px',
+        fontWeight: 'bold',
+        padding: '10px 20px'
+    }
+
+    export const buttonStyles2M = {
+        backgroundColor: 'rgb(47, 115, 182)',
+        border: 'None',
+        color: 'white',
+        margin: '10px',
+        fontSize: '5vw',
+        borderRadius: '15px',
+        fontWeight: 'bold',
+        padding: '10px 20px'
+    }
 
 // Container styles
-export const containerStyles = {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    backgroundColor: 'rgb(211, 212, 228)',
-    height: '100%',
-    padding: '15px'
-}
 
-export const containerStyles2 = {
-    alignItems: 'center',
-    textAlign: 'center',
-    backgroundColor: 'rgb(211, 212, 228)',
-    height: '100%',
-    padding: '15px',
-    fontSize: '10px'
-}
+    // Browser
+    export const containerStyles = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        backgroundColor: 'rgb(211, 212, 228)',
+        height: '100%',
+        padding: '15px'
+    }
+
+    export const containerStyles2 = {
+        alignItems: 'center',
+        textAlign: 'center',
+        backgroundColor: 'rgb(211, 212, 228)',
+        height: '100%',
+        padding: '15px',
+        fontSize: '10px'
+    }
+
+    // Mobile
+    export const containerStyles2M = {
+        margin: '10px',
+        fontSize: '7px',
+    }
+
 
 // Text styles
 
-// Browser
-export const titleStyleTop = {
-    width: '30vw',
-    backgroundColor: 'rgb(47, 115, 182)',
-    paddingLeft: '5vw',
-    paddingRight: '12vw',
-    paddingTop: '0px',
-    paddingBottom: '0px',
-    margin: '10vw',
-    marginBottom: '0px',
-    borderTopRightRadius: '15px',
-    borderTopLeftRadius: '15px',
-    fontSize: '5vw'
-}
+    // Browser
+    export const fontSizeStyle = {
+        fontSize: '1.5vw'
+    }
 
-export const titleStyleBottom = {
-    width: '30vw',
-    color: 'white',
-    backgroundColor: 'rgb(47, 115, 182)',
-    paddingLeft: '9vw',
-    paddingRight: '8vw',
-    paddingBottom: '1vw',
-    paddingTop: '0px',
-    margin: '10vw',
-    marginTop: '0px',
-    marginBottom: '1vw',
-    borderBottomRightRadius: '15px',
-    borderBottomLeftRadius: '15px',
-    fontSize: '5vw'
-}
+    export const titleStyleTop = {
+        width: '30vw',
+        backgroundColor: 'rgb(47, 115, 182)',
+        paddingLeft: '5vw',
+        paddingRight: '12vw',
+        paddingTop: '0px',
+        paddingBottom: '0px',
+        margin: '10vw',
+        marginBottom: '0px',
+        borderTopRightRadius: '15px',
+        borderTopLeftRadius: '15px',
+        fontSize: '5vw'
+    }
 
-export const placeHolderStyles = {
-    width: '45vw',
-    backgroundColor: 'White',
-    border: 'None',
-    color: 'black',
-    margin: '10px',
-    fontSize: '2vw',
-    borderRadius: '15px',
-    fontWeight: 'bold',
-    padding: '10px 20px'
-}
+    export const titleStyleBottom = {
+        width: '30vw',
+        color: 'white',
+        backgroundColor: 'rgb(47, 115, 182)',
+        paddingLeft: '9vw',
+        paddingRight: '8vw',
+        paddingBottom: '1vw',
+        paddingTop: '0px',
+        margin: '10vw',
+        marginTop: '0px',
+        marginBottom: '1vw',
+        borderBottomRightRadius: '15px',
+        borderBottomLeftRadius: '15px',
+        fontSize: '5vw'
+    }
 
-// Mobile
-export const titleStyleTopM = {
-    width: '45vw',
-    backgroundColor: 'rgb(47, 115, 182)',
-    paddingLeft: '10vw',
-    paddingRight: '26vw',
-    paddingTop: '0px',
-    paddingBottom: '0px',
-    margin: '10vw',
-    marginBottom: '0px',
-    borderTopRightRadius: '15px',
-    borderTopLeftRadius: '15px',
-    fontSize: '15vw'
-}
+    export const placeHolderStyles = {
+        width: '45vw',
+        backgroundColor: 'White',
+        border: 'None',
+        color: 'black',
+        margin: '10px',
+        fontSize: '2vw',
+        borderRadius: '15px',
+        fontWeight: 'bold',
+        padding: '10px 20px'
+    }
 
-export const titleStyleBottomM = {
-    width: '45vw',
-    color: 'white',
-    backgroundColor: 'rgb(47, 115, 182)',
-    paddingLeft: '14vw',
-    paddingRight: '22vw',
-    paddingBottom: '1vw',
-    paddingTop: '0px',
-    margin: '10vw',
-    marginTop: '0px',
-    marginBottom: '10vw',
-    borderBottomRightRadius: '15px',
-    borderBottomLeftRadius: '15px',
-    fontSize: '15vw'
-}
+    export const h1StyleTop = {
+        width: '15vw',
+        backgroundColor: 'rgb(47, 115, 182)',
+        paddingLeft: '5vw',
+        paddingRight: '10vw',
+        paddingTop: '0px',
+        paddingBottom: '0px',
+        margin: '10vw',
+        marginBottom: '0px',
+        borderTopRightRadius: '15px',
+        borderTopLeftRadius: '15px',
+        fontSize: '2.5vw'
+    }
+
+    export const h1StyleBottom = {
+        width: '15vw',
+        color: 'white',
+        backgroundColor: 'rgb(47, 115, 182)',
+        paddingLeft: '9vw',
+        paddingRight: '6vw',
+        paddingBottom: '1vw',
+        paddingTop: '0px',
+        margin: '10vw',
+        marginTop: '0px',
+        marginBottom: '1vw',
+        borderBottomRightRadius: '15px',
+        borderBottomLeftRadius: '15px',
+        fontSize: '2.5vw'
+    }
+
+    // Mobile
+    export const fontSizeStyleM = {
+        fontSize: '5vw'
+    }
+
+    export const titleStyleTopM = {
+        width: '45vw',
+        backgroundColor: 'rgb(47, 115, 182)',
+        paddingLeft: '10vw',
+        paddingRight: '26vw',
+        paddingTop: '0px',
+        paddingBottom: '0px',
+        margin: '10vw',
+        marginBottom: '0px',
+        borderTopRightRadius: '15px',
+        borderTopLeftRadius: '15px',
+        fontSize: '15vw'
+    }
+
+    export const titleStyleBottomM = {
+        width: '45vw',
+        color: 'white',
+        backgroundColor: 'rgb(47, 115, 182)',
+        paddingLeft: '14vw',
+        paddingRight: '22vw',
+        paddingBottom: '1vw',
+        paddingTop: '0px',
+        margin: '10vw',
+        marginTop: '0px',
+        marginBottom: '10vw',
+        borderBottomRightRadius: '15px',
+        borderBottomLeftRadius: '15px',
+        fontSize: '15vw'
+    }
+
+
+    export const placeHolderStylesM = {
+        width: '70vw',
+        backgroundColor: 'White',
+        border: 'None',
+        color: 'black',
+        margin: '10px',
+        fontSize: '6vw',
+        borderRadius: '15px',
+        fontWeight: 'bold',
+        padding: '10px 20px'
+    }
+
+    export const h1StyleTopM = {
+        width: '55vw',
+        backgroundColor: 'rgb(47, 115, 182)',
+        paddingLeft: '6vw',
+        paddingRight: '26vw',
+        paddingTop: '0px',
+        paddingBottom: '0px',
+        margin: '10vw',
+        marginBottom: '0px',
+        borderTopRightRadius: '15px',
+        borderTopLeftRadius: '15px',
+        fontSize: '9vw'
+    }
+
+    export const h1StyleBottomM = {
+        width: '55vw',
+        color: 'white',
+        backgroundColor: 'rgb(47, 115, 182)',
+        paddingLeft: '18vw',
+        paddingRight: '14vw',
+        paddingBottom: '1vw',
+        paddingTop: '0px',
+        margin: '10vw',
+        marginTop: '0px',
+        marginBottom: '10vw',
+        borderBottomRightRadius: '15px',
+        borderBottomLeftRadius: '15px',
+        fontSize: '9vw'
+    }
+
 
 export const resultStyles = {
     backgroundColor: 'White',
@@ -188,11 +304,6 @@ export const ratingStyle = {
     marginTop: '0px',
     borderBottomRightRadius: '15px',
     borderBottomLeftRadius: '15px',
-}
-
-export const docxStyle = {
-    margin: '10px',
-    fontSize: '7px',
 }
 
 export const letteringStyle = {

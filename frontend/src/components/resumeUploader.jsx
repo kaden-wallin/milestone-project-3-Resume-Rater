@@ -3,13 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Dropzone from 'react-dropzone'
 import setAuthToken from './setAuthToken'
-import { 
+import IsMobile, { 
 	uploadStyle, 
-	buttonStyles, 
+	buttonStyles,
+	buttonStylesM, 
+	buttonStyles2,
+	buttonStyles2M,
 	letteringStyle, 
 	containerStyles, 
-	titleStyleTop, 
-	titleStyleBottom, 
+	h1StyleTop, 
+	h1StyleBottom,
+	h1StyleTopM, 
+	h1StyleBottomM, 
 	errorStyle 
 } from '../styles'
 
@@ -53,10 +58,17 @@ const ResumeUploader = ({ user }) => {
 		navigate('/')
 	}
 
+	const isMobile = IsMobile()
+
+    const h1Top = isMobile ? h1StyleTop : h1StyleTopM
+    const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
+	const button = isMobile ? buttonStyles : buttonStylesM
+    const button2 = isMobile ? buttonStyles2 : buttonStyles2M
+
 	return (
 		<form style={containerStyles} onSubmit={handleSubmit}>
-			<h1 style={titleStyleTop}>Upload </h1>
-			<h1 style={titleStyleBottom}>a Resume</h1>
+			<h1 style={h1Top}>Upload </h1>
+			<h1 style={h1Bottom}>a Resume</h1>
 			<Dropzone onDrop={handleFileDrop}>
 				{({ getRootProps, getInputProps }) => (
 					<div {...getRootProps()}>
@@ -69,10 +81,10 @@ const ResumeUploader = ({ user }) => {
 					</div>
 				)}
 			</Dropzone>
-			<button style={buttonStyles} type="submit" disabled={!file}>
+			<button style={button} type="submit" disabled={!file}>
 				Upload Resume
 			</button>
-			<button style={buttonStyles} onClick={home}>Back</button>
+			<button style={button2} onClick={home}>Back</button>
 		</form>
 	)
 }

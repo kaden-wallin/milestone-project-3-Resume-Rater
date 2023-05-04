@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { 
-    errorStyle, 
-    buttonStyles2, 
-    titleStyleBottom, 
-    titleStyleTop, 
-    buttonStyles, 
+import IsMobile, { 
+    errorStyle,
+    fontSizeStyle,
+    fontSizeStyleM,
+    buttonStyles,
+    buttonStylesM, 
+    buttonStyles2,
+    buttonStyles2M,
+    h1StyleTop,
+    h1StyleTopM, 
+    h1StyleBottom,
+    h1StyleBottomM,
+    placeHolderStyles,
+    placeHolderStylesM,  
     letteringStyle, 
     containerStyles 
 } from "../styles";
@@ -21,7 +29,7 @@ const LoginForm = ({ setUser }) => {
         event.preventDefault()
 
         try {
-            const response = await axios.post("https://rottenresumes.pythonanywhere.com/api/login", {
+            const response = await axios.post('https://rottenresumes.pythonanywhere.com/api/login', {
                 email,
                 password
             })
@@ -42,17 +50,26 @@ const LoginForm = ({ setUser }) => {
         navigate('/')
     }
 
+    const isMobile = IsMobile()
+
+    const h1Top = isMobile ? h1StyleTop : h1StyleTopM
+    const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
+    const fontSize = isMobile ? fontSizeStyle : fontSizeStyleM
+    const button = isMobile ? buttonStyles : buttonStylesM
+    const button2 = isMobile ? buttonStyles2 : buttonStyles2M
+    const placeHolder = isMobile ? placeHolderStyles : placeHolderStylesM
+
     return (
         <div style={containerStyles}>
-            <h1 style={titleStyleTop}>Login here</h1>
-            <h1 style={titleStyleBottom}> and Critique</h1>
+            <h1 style={h1Top}>Login here</h1>
+            <h1 style={h1Bottom}> and Critique</h1>
             {errorMessage && <p style={errorStyle}>{errorMessage}</p>}
             <form style={letteringStyle} onSubmit={handleSubmit}>
                 
-                <label htmlFor="email">Email</label>
+                <label style={fontSize} htmlFor="email">Email</label>
                 <input
                     placeholder="example@email.com"
-                    style={buttonStyles}
+                    style={placeHolder}
                     type="email"
                     name="email"
                     autoComplete="email"
@@ -60,20 +77,20 @@ const LoginForm = ({ setUser }) => {
                     onChange={(event) => setEmail(event.target.value)}
                 />
                 <br></br>
-                <label htmlFor="password">Password</label>
+                <label style={fontSize} htmlFor="password">Password</label>
                 <input
                     placeholder="password123"
-                    style={buttonStyles}
+                    style={placeHolder}
                     type="password"
                     name="password"
                     autoComplete="current-password"
                     required
                     onChange={(event) => setPassword(event.target.value)}
                 />
-                <button style={buttonStyles2} type="submit">Log in</button>
-                <p>New? Register here</p>
-                <button style={buttonStyles2} onClick={register}>Register</button>
-                <button style={buttonStyles} onClick={home}>Back</button>
+                <button style={button2} type="submit">Log in</button>
+                <p style={fontSize}>New? Register here</p>
+                <button style={button2} onClick={register}>Register</button>
+                <button style={button} onClick={home}>Back</button>
             </form>
         </div>
     )

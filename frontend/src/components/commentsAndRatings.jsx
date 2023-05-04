@@ -2,7 +2,14 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 import setAuthToken from './setAuthToken'
-import { buttonStyles, letteringStyle } from '../styles';
+import IsMobile, 
+{ 
+    buttonStyles,
+    buttonStylesM,  
+    letteringStyle, 
+    placeHolderStyles,
+    placeHolderStylesM
+} from '../styles';
 
 function CommentsAndRatings({ resumeId }) {
     const [comment, setComment] = useState('')
@@ -40,24 +47,29 @@ function CommentsAndRatings({ resumeId }) {
             navigate('/')
     }
 
+    const isMobile = IsMobile()
+
+    const button = isMobile ? buttonStyles : buttonStylesM
+    const placeHolder = isMobile ? placeHolderStyles : placeHolderStylesM
+
     return (
-        <div>
+        <div style={{textAlign: 'center'}}>
             <form style={letteringStyle} onSubmit={handleSubmit}>
                 <label>
                     Comment:
-                    <input type="text" style={buttonStyles} value={comment} onChange={handleCommentChange} />
+                    <input type="text" style={placeHolder} value={comment} onChange={handleCommentChange} />
                 </label>
                 <br></br>
                 <label>
                     Rating:
-                    <select style={buttonStyles} value={rating} onChange={handleRatingChange}>
+                    <select style={button} value={rating} onChange={handleRatingChange}>
                         <option value="0">Select a rating</option>
                         {[...Array(5)].map((_, index) => (
                             <option key={index} value={index + 1}>{index + 1}</option>
                         ))}
                     </select>
                 </label>
-                <button style={buttonStyles} type="submit">Submit</button>
+                <button style={button} type="submit">Submit</button>
             </form>
         </div>
     );

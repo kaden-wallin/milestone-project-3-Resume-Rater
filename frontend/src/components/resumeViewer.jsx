@@ -3,17 +3,20 @@ import { useParams, useNavigate } from 'react-router-dom'
 import FileViewer from 'react-file-viewer'
 import CommentsAndRatings from './commentsAndRatings'
 import axios from 'axios'
-import { 
+import IsMobile, { 
     spaceStyles, 
-    docxStyle, 
+    containerStyles2M, 
     containerStyles2, 
-    buttonStyles, 
-    letteringStyle, 
-    commentStyle, 
-    ratingStyle, 
-    buttonStyles2 
+    buttonStyles,
+    buttonStyles2,
+    buttonStylesM,
+    buttonStyles2M,
+    h1StyleTop,
+    h1StyleTopM,
+    h1StyleBottom,
+    h1StyleBottomM,
+    letteringStyle,
 } from '../styles'
-import IsMobile from '../styles'
 
 function ViewResume({ user }) {
     const { resumeId } = useParams()
@@ -32,7 +35,11 @@ function ViewResume({ user }) {
 
     const isAuthenticated = user && localStorage.getItem("access_token")
 
-    const styles = isMobile ? containerStyles2 : docxStyle
+    const styles = isMobile ? containerStyles2 : containerStyles2M
+    const button = isMobile ? buttonStyles : buttonStylesM
+    const button2 = isMobile ? buttonStyles2 : buttonStyles2M
+    const h1Top = isMobile ? h1StyleTop : h1StyleTopM
+    const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
 
     useEffect(() => {
         axios
@@ -110,18 +117,18 @@ function ViewResume({ user }) {
                     {commentsAndRatings.length === 0 ? (
                         <div>
                             <p style={letteringStyle}>No comments or ratings to display</p>
-                            <button style={buttonStyles2} onClick={home}>Back</button>
+                            <button style={button2} onClick={home}>Back</button>
                         </div>
                     ) : (
                         <div style={spaceStyles}>
-                            <h1 style={commentStyle}>Comments</h1>
-                            <h1 style={ratingStyle}>and Ratings</h1>
+                            <h1 style={h1Top}>Comments</h1>
+                            <h1 style={h1Bottom}>and Ratings</h1>
                             {commentsAndRatings.map(({ comment, rating, username }, index) => (
-                                <span key={index} style={buttonStyles}>
+                                <span key={index} style={button}>
                                     {comment} <span style={color}>-</span> {rating} star(s) says <span style={color}>{username}</span>
                                 </span>
                             ))}
-                            <button style={buttonStyles2} onClick={home}>Back</button>
+                            <button style={button2} onClick={home}>Back</button>
                         </div>
                     )}
                 </div>
@@ -135,25 +142,24 @@ function ViewResume({ user }) {
                                 filePath={fileUrl}
                                 errorComponent={CustomErrorComponent}
                             />
-                            <br></br>
                         </div>
                     )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     {commentsAndRatings.length === 0 ? (
                         <div>
                             <p style={letteringStyle}>No comments or ratings to display</p>
-                            <button style={buttonStyles2} onClick={home}>Back</button>
+                            <button style={button2} onClick={home}>Back</button>
                         </div>
                     ) : (
                         <div style={spaceStyles}>
-                            <h1 style={commentStyle}>Comments</h1>
-                            <h1 style={ratingStyle}>and Ratings</h1>
+                            <h1 style={h1Top}>Comments</h1>
+                            <h1 style={h1Bottom}>and Ratings</h1>
                             {commentsAndRatings.map(({ comment, rating, username }, index) => (
-                                <span key={index} style={buttonStyles}>
+                                <span key={index} style={button}>
                                     {comment} <span style={color}>-</span> {rating} star(s) says <span style={color}>{username}</span>
                                 </span>
                             ))}
-                            <button style={buttonStyles2} onClick={home}>Back</button>
+                            <button style={button2} onClick={home}>Back</button>
                         </div>
                     )}
                 </div>

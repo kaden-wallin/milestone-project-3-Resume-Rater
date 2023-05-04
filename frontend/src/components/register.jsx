@@ -1,14 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { 
-    titleStyleBottom, 
-    titleStyleTop, 
-    buttonStyles, 
-    buttonStyles2, 
+import IsMobile, { 
+    errorStyle,
+    fontSizeStyle,
+    fontSizeStyleM,
+    buttonStyles,
+    buttonStylesM, 
+    buttonStyles2,
+    buttonStyles2M,
+    h1StyleTop,
+    h1StyleTopM, 
+    h1StyleBottom,
+    h1StyleBottomM,
+    placeHolderStyles,
+    placeHolderStylesM,  
     letteringStyle, 
-    containerStyles, 
-    errorStyle
+    containerStyles 
 } from "../styles";
 
 const RegisterForm = ({ setUser }) => {
@@ -22,7 +30,7 @@ const RegisterForm = ({ setUser }) => {
         event.preventDefault()
 
         try {
-            const response = await axios.post("https://rottenresumes.pythonanywhere.com/api/register", {
+            const response = await axios.post('https://rottenresumes.pythonanywhere.com/api/register', {
                 username,
                 email,
                 password,
@@ -44,47 +52,74 @@ const RegisterForm = ({ setUser }) => {
         navigate('/')
     }
 
+    const isMobile = IsMobile()
+
+    const fontSize = isMobile ? fontSizeStyle : fontSizeStyleM
+    const h1Top = isMobile ? h1StyleTop : h1StyleTopM
+    const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
+    const button = isMobile ? buttonStyles : buttonStylesM
+    const button2 = isMobile ? buttonStyles2 : buttonStyles2M
+    const placeHolder = isMobile ? placeHolderStyles : placeHolderStylesM
+
     return (
         <div style={containerStyles}>
-            <h1 style={titleStyleTop}>Register to</h1>
-            <h1 style={titleStyleBottom}>get Started</h1>
+            <h1 style={h1Top}>Register to</h1>
+            <h1 style={h1Bottom}>get Started</h1>
             {errorMessage && <p style={errorStyle}>{errorMessage}</p>}
             <form style={letteringStyle} onSubmit={handleSubmit}>
-                <label htmlFor="username">Username</label>
+                <label style={fontSize} htmlFor="username">Username</label>
                     <input
                         placeholder="user_321"
-                        style={buttonStyles}
+                        style={placeHolder}
                         type="text"
                         name="username"
                         required
                         onChange={(event) => setUsername(event.target.value)}
                     />
                     <br></br>
-                <label htmlFor="email">Email</label>
-                    <input
-                        placeholder="example@email.com"
-                        style={buttonStyles}
-                        type="email"
-                        name="email"
-                        autoComplete="email"
-                        required
-                        onChange={(event) => setEmail(event.target.value)}
-                    />
-                    <br></br>
-                <label htmlFor="password">Password</label>
+                {IsMobile ? (
+                    <div>
+                        <label style={fontSize} htmlFor="email">Email</label>
+                        <input
+                            placeholder="example@email.com"
+                            style={placeHolder}
+                            type="email"
+                            name="email"
+                            autoComplete="email"
+                            required
+                            onChange={(event) => setEmail(event.target.value)}
+                        />
+                        <br></br>
+                    </div>
+                    ) : (
+                    <div>
+                        <label style={fontSize} htmlFor="email">Email</label>
+                        <input
+                            placeholder="example@email.com"
+                            style={placeHolder}
+                            type="email"
+                            name="email"
+                            autoComplete="email"
+                            required
+                            onChange={(event) => setEmail(event.target.value)}
+                        />
+                        <br></br>
+                    </div>
+                    )}
+                <label style={fontSize} htmlFor="password">Password</label>
                     <input
                         placeholder="password123"
-                        style={buttonStyles}
+                        style={placeHolder}
                         type="password"
                         name="password"
                         autoComplete="current-password"
                         required
                         onChange={(event) => setPassword(event.target.value)}
                     />
-                <button style={buttonStyles2} type="submit">Register</button>
-                <p>Already have an account? Login here</p>
-                <button style={buttonStyles2} onClick={login}>Login</button>
-                <button style={buttonStyles} onClick={home}>Back</button>
+                <button style={button2} type="submit">Register</button>
+                <p style={fontSize}>Already have an account? Login here</p>
+                <button style={button2} onClick={login}>Login</button>
+                <button style={button} onClick={home}>Back</button>
             </form>
         </div>
     )
