@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom"
-import { 
-    letteringStyle, 
-    buttonStyles, 
+import IsMobile, { 
+    letteringStyle,  
     resultStyles, 
     listStyles, 
     buttonStyles2,
-    placeHolderStyles 
+    buttonStyles2M,
+    placeHolderStyles,
+    placeHolderStylesM,
+    containerStyles 
 } from '../styles'
 
 function SearchResumes() {
@@ -29,11 +31,16 @@ function SearchResumes() {
         }
     }
 
+    const isMobile = IsMobile()
+
+    const placeHolder = isMobile ? placeHolderStyles : placeHolderStylesM
+    const button = isMobile ? buttonStyles2 : buttonStyles2M
+    
     return (
-        <div>
+        <div style={containerStyles}>
             <form onSubmit={handleSearch}>
-                <input style={placeHolderStyles} placeholder="Find keywords in resumes" type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
-                <button style={buttonStyles2} type="submit">Search</button>
+                <input style={placeHolder} placeholder="Find keywords in resumes" type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
+                <button style={button} type="submit">Search</button>
             </form>
             {loading && <p style={letteringStyle}>Loading...</p>}
             {searchResults === undefined && <p style={letteringStyle}>No Matching resumes found</p>}
