@@ -42,56 +42,49 @@ function ViewResume({ user }) {
     const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
 
     useEffect(() => {
-        axios
-            .get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
-            .then((response) => {
-                const file = response.data;
-                const binaryString = window.atob(file.url.split(',')[1]);
-                const bytes = new Uint8Array(binaryString.length)
-                for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i)
-                }
-                const blob = new Blob([bytes], { type: 'application/octet-stream' })
-                const url = URL.createObjectURL(blob)
-                setFileUrl(url)
-                setLoading(false)
-                const extension = file.filename.split('.').pop().toLowerCase()
-                switch (extension) {
-                    case 'pdf':
-                        setFileType('pdf')
-                        break;
-                    case 'doc':
-                    case 'docx':
-                        setFileType('docx')
-                        break;
-                    case 'txt':
-                        setFileType('txt')
-                        break;
-                    default:
-                        setFileType('')
-                }
-            })
-            .catch((error) => {
-                console.error(`Fetch error: ${error}`)
-            })
-    }, [resumeId])
-
-    useEffect(() => {
-        axios
-            .get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
-            .then((response) => {
-                const { comments, ratings, usernames } = response.data;
-                const commentsAndRatings = comments.map((comment, index) => ({
-                    comment,
-                    rating: ratings[index],
-                    username: usernames[index],
-                }));
-                setCommentsAndRatings(commentsAndRatings);
-            })
-            .catch((error) => {
-                console.error(`Fetch error: ${error}`);
-            });
-    }, [resumeId])
+        Promise.all([
+          axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`),
+          axios.get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
+        ])
+        .then((responses) => {
+          const file = responses[0].data
+          const binaryString = window.atob(file.url.split(',')[1])
+          const bytes = new Uint8Array(binaryString.length)
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i)
+          }
+          const blob = new Blob([bytes], { type: 'application/octet-stream' })
+          const url = URL.createObjectURL(blob)
+          setFileUrl(url)
+          setLoading(false)
+          const extension = file.filename.split('.').pop().toLowerCase()
+          switch (extension) {
+            case 'pdf':
+              setFileType('pdf')
+              break
+            case 'doc':
+            case 'docx':
+              setFileType('docx')
+              break
+            case 'txt':
+              setFileType('txt')
+              break
+            default:
+              setFileType('')
+          }
+          const { comments, ratings, usernames } = responses[1].data
+          const commentsAndRatings = comments.map((comment, index) => ({
+            comment,
+            rating: ratings[index],
+            username: usernames[index],
+          }))
+          setCommentsAndRatings(commentsAndRatings)
+        })
+        .catch((error) => {
+          console.error(`Fetch error: ${error}`)
+        })
+      }, [resumeId])
+      
 
     const CustomErrorComponent = ({ error }) => {
         const message = error && error.message ? error.message : 'Failed to load file'
