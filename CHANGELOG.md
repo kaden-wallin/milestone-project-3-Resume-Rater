@@ -357,6 +357,10 @@ Date:   Thu May 4 16:16:21 2023 -0600
 
     added comments to all the code so you can see what I did and my thought process was
 
-Date:   Thu May 4 17:40:21 2023 -0600
+Date:   Thu May 4 17:35:27 2023 -0600
 
-    
+    added t0 the README as well as added a CHANGELOG
+
+Date:   Thu May 4 17:37:04 2023 -0600
+
+    oops, forgot to change the most recent commit so it's accurate
