@@ -11,6 +11,7 @@ import IsMobile,
     placeHolderStylesM
 } from '../styles';
 
+// This function lets authenticated users comment and rate a resume
 function CommentsAndRatings({ resumeId }) {
     const [comment, setComment] = useState('')
     const [rating, setRating] = useState(0)
@@ -47,11 +48,13 @@ function CommentsAndRatings({ resumeId }) {
             navigate('/')
     }
 
+// These are the media query variables and function to set it
     const isMobile = IsMobile()
 
     const button = isMobile ? buttonStyles : buttonStylesM
     const placeHolder = isMobile ? placeHolderStyles : placeHolderStylesM
 
+// Not sure the way I set up rating was all that efficent but I am pretty proud of how more DRY it was than what I first had
     return (
         <div style={{textAlign: 'center'}}>
             <form style={letteringStyle} onSubmit={handleSubmit}>

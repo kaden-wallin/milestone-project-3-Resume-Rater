@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react'
 
+{/*
+I had to do all my styling inline because no matter what I did I couldn't get my CSS file to import
+I was far too busy with the rest of the app to be able to figure out the CSS problem so I just started doing inline
+By the time I was would've been able to figure it out I already had this system worked out and in my opinion it's kind of impressive
+*/}
+
+// This is the function I used to set the media queries throughout the app
 function IsMobile() {
     const [isMobile, setIsMobile] = useState(false)
 
@@ -259,7 +266,7 @@ export default IsMobile
         fontSize: '9vw'
     }
 
-
+// Miscellaneous
 export const resultStyles = {
     backgroundColor: 'White',
     border: 'None',
@@ -275,35 +282,6 @@ export const resultStyles = {
 export const listStyles = {
     listStyle: 'None',
     alignItems: 'center',
-}
-  
-export const commentStyle = {
-    fontSize: '3em',
-    width: '300px',
-    textAlign: 'left',
-    backgroundColor: 'rgb(47, 115, 182)',
-    padding: '15px',
-    paddingBottom: '0px',
-    paddingLeft: '100px',
-    margin: '10px',
-    marginBottom: '0px',
-    borderTopRightRadius: '15px',
-    borderTopLeftRadius: '15px',
-}
-
-export const ratingStyle = {
-    fontSize: '3em',
-    width: '300px',
-    textAlign: 'right',
-    color: 'white',
-    backgroundColor: 'rgb(47, 115, 182)',
-    padding: '15px',
-    paddingTop: '0px',
-    paddingRight: '100px',
-    margin: '10px',
-    marginTop: '0px',
-    borderBottomRightRadius: '15px',
-    borderBottomLeftRadius: '15px',
 }
 
 export const letteringStyle = {

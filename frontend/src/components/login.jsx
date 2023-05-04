@@ -19,6 +19,7 @@ import IsMobile, {
     containerStyles 
 } from "../styles";
 
+// This is where the login info is set and sent to the route
 const LoginForm = ({ setUser }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -50,6 +51,7 @@ const LoginForm = ({ setUser }) => {
         navigate('/')
     }
 
+// These are the media query variables and function to set it
     const isMobile = IsMobile()
 
     const h1Top = isMobile ? h1StyleTop : h1StyleTopM

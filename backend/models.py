@@ -2,7 +2,6 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
 from sqlalchemy.dialects.postgresql import BYTEA
 from sqlalchemy.orm import relationship, declarative_base
-from datetime import datetime, timedelta
 
 # Models For Database
 Base = declarative_base()

@@ -12,6 +12,7 @@ import IsMobile, {
     containerStyles 
 } from '../styles'
 
+// As stated in the home component this is where the results are actually set to display and them I imported it to home
 function SearchResumes() {
     const navigate = useNavigate()
     const [searchTerm, setSearchTerm] = useState('')
@@ -31,11 +32,13 @@ function SearchResumes() {
         }
     }
 
+// These are the media query variables and function to set it
     const isMobile = IsMobile()
 
     const placeHolder = isMobile ? placeHolderStyles : placeHolderStylesM
     const button = isMobile ? buttonStyles2 : buttonStyles2M
-    
+
+// I needed to add conditional expressions because it took so long to load and then wouldn't give you any indication that your search came up with no results otherwise
     return (
         <div style={containerStyles}>
             <form onSubmit={handleSearch}>

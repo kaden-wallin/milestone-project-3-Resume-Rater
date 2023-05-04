@@ -1,24 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import IsMobile, { 
+import IsMobile, {
     errorStyle,
     fontSizeStyle,
     fontSizeStyleM,
     buttonStyles,
-    buttonStylesM, 
+    buttonStylesM,
     buttonStyles2,
     buttonStyles2M,
     h1StyleTop,
-    h1StyleTopM, 
+    h1StyleTopM,
     h1StyleBottom,
     h1StyleBottomM,
     placeHolderStyles,
-    placeHolderStylesM,  
-    letteringStyle, 
-    containerStyles 
+    placeHolderStylesM,
+    letteringStyle,
+    containerStyles
 } from "../styles";
 
+// This is where the user info is set and sent to the backend to be processed and stored
 const RegisterForm = ({ setUser }) => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -52,6 +53,7 @@ const RegisterForm = ({ setUser }) => {
         navigate('/')
     }
 
+    // These are the media query variables and function to set it
     const isMobile = IsMobile()
 
     const fontSize = isMobile ? fontSizeStyle : fontSizeStyleM
@@ -68,54 +70,38 @@ const RegisterForm = ({ setUser }) => {
             {errorMessage && <p style={errorStyle}>{errorMessage}</p>}
             <form style={letteringStyle} onSubmit={handleSubmit}>
                 <label style={fontSize} htmlFor="username">Username</label>
+                <input
+                    placeholder="user_321"
+                    style={placeHolder}
+                    type="text"
+                    name="username"
+                    required
+                    onChange={(event) => setUsername(event.target.value)}
+                />
+                <br></br>
+                <div>
+                    <label style={fontSize} htmlFor="email">Email</label>
                     <input
-                        placeholder="user_321"
+                        placeholder="example@email.com"
                         style={placeHolder}
-                        type="text"
-                        name="username"
+                        type="email"
+                        name="email"
+                        autoComplete="email"
                         required
-                        onChange={(event) => setUsername(event.target.value)}
+                        onChange={(event) => setEmail(event.target.value)}
                     />
                     <br></br>
-                {IsMobile ? (
-                    <div>
-                        <label style={fontSize} htmlFor="email">Email</label>
-                        <input
-                            placeholder="example@email.com"
-                            style={placeHolder}
-                            type="email"
-                            name="email"
-                            autoComplete="email"
-                            required
-                            onChange={(event) => setEmail(event.target.value)}
-                        />
-                        <br></br>
-                    </div>
-                    ) : (
-                    <div>
-                        <label style={fontSize} htmlFor="email">Email</label>
-                        <input
-                            placeholder="example@email.com"
-                            style={placeHolder}
-                            type="email"
-                            name="email"
-                            autoComplete="email"
-                            required
-                            onChange={(event) => setEmail(event.target.value)}
-                        />
-                        <br></br>
-                    </div>
-                    )}
+                </div>
                 <label style={fontSize} htmlFor="password">Password</label>
-                    <input
-                        placeholder="password123"
-                        style={placeHolder}
-                        type="password"
-                        name="password"
-                        autoComplete="current-password"
-                        required
-                        onChange={(event) => setPassword(event.target.value)}
-                    />
+                <input
+                    placeholder="password123"
+                    style={placeHolder}
+                    type="password"
+                    name="password"
+                    autoComplete="current-password"
+                    required
+                    onChange={(event) => setPassword(event.target.value)}
+                />
                 <button style={button2} type="submit">Register</button>
                 <p style={fontSize}>Already have an account? Login here</p>
                 <button style={button2} onClick={login}>Login</button>

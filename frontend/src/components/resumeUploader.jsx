@@ -18,7 +18,8 @@ import IsMobile, {
 	errorStyle 
 } from '../styles'
 
-const ResumeUploader = ({ user }) => {
+// This is where the resume file is sent to the backend
+const ResumeUploader = () => {
 	const [file, setFile] = useState(null)
 	const [errorMessage, setErrorMessage] = useState(null)
 	const navigate = useNavigate()
@@ -58,6 +59,7 @@ const ResumeUploader = ({ user }) => {
 		navigate('/')
 	}
 
+// These are the media query variables and function to set it
 	const isMobile = IsMobile()
 
     const h1Top = isMobile ? h1StyleTop : h1StyleTopM

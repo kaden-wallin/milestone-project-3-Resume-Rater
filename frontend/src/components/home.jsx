@@ -14,6 +14,7 @@ import IsMobile, {
     titleStyleBottomM 
 } from '../styles';
 
+// These are my different buttons
 const Home = ({ user, setUser }) => {
     const navigate = useNavigate()
 
@@ -34,6 +35,7 @@ const Home = ({ user, setUser }) => {
         localStorage.removeItem("access_token")
     }
 
+// This is how the search function works, code for the actual displaying of the results are in the searchResumes component
     const handleSearch = async (searchKeywords) => {
         try {
           const response = await fetch(`https://rottenresumes.pythonanywhere.com/api/search-resumes/${searchKeywords}`);
@@ -44,6 +46,7 @@ const Home = ({ user, setUser }) => {
         }
     };
 
+// These are the media query variables and function to set it
     const isMobile = IsMobile()
 
     const titleTop = isMobile ? titleStyleTop : titleStyleTopM
@@ -57,6 +60,7 @@ const Home = ({ user, setUser }) => {
 
     const isAuthenticated = user && localStorage.getItem("access_token")
 
+// I needed to do several conditional statements for component rendering so sorry in advance
     return (
         <div style={containerStyles} >
             {isAuthenticated ? (
