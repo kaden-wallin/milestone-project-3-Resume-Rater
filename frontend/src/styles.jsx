@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
-{/*
+/*
 I had to do all my styling inline because no matter what I did I couldn't get my CSS file to import
 I was far too busy with the rest of the app to be able to figure out the CSS problem so I just started doing inline
 By the time I was would've been able to figure it out I already had this system worked out and in my opinion it's kind of impressive
-*/}
+*/;
 
 // This is the function I used to set the media queries throughout the app
 function IsMobile() {
@@ -15,7 +15,7 @@ function IsMobile() {
 
         const handleMediaQueryChange = (event) => {
             setIsMobile(event.matches)
-        }
+        };
 
         setIsMobile(mediaQuery.matches)
 
@@ -23,11 +23,11 @@ function IsMobile() {
 
         return () => {
             mediaQuery.removeListener(handleMediaQueryChange)
-        }
-    }, [])
+        };
+    }, []);
 
     return isMobile
-}
+};
 
 export default IsMobile
    
@@ -43,7 +43,7 @@ export default IsMobile
         borderRadius: '15px',
         fontWeight: 'bold',
         padding: '10px 20px'
-    }
+    };
 
     export const buttonStyles2 = {
         backgroundColor: 'rgb(47, 115, 182)',
@@ -54,7 +54,7 @@ export default IsMobile
         borderRadius: '15px',
         fontWeight: 'bold',
         padding: '10px 20px'
-    }
+    };
 
     // Mobile
     export const buttonStylesM = {
@@ -66,7 +66,7 @@ export default IsMobile
         borderRadius: '15px',
         fontWeight: 'bold',
         padding: '10px 20px'
-    }
+    };
 
     export const buttonStyles2M = {
         backgroundColor: 'rgb(47, 115, 182)',
@@ -77,7 +77,7 @@ export default IsMobile
         borderRadius: '15px',
         fontWeight: 'bold',
         padding: '10px 20px'
-    }
+    };
 
 // Container styles
 
@@ -91,7 +91,7 @@ export default IsMobile
         backgroundColor: 'rgb(211, 212, 228)',
         height: '100%',
         padding: '15px'
-    }
+    };
 
     export const containerStyles2 = {
         alignItems: 'center',
@@ -100,13 +100,13 @@ export default IsMobile
         height: '100%',
         padding: '15px',
         fontSize: '10px'
-    }
+    };
 
     // Mobile
     export const containerStyles2M = {
         margin: '10px',
         fontSize: '7px',
-    }
+    };
 
 
 // Text styles
@@ -114,7 +114,7 @@ export default IsMobile
     // Browser
     export const fontSizeStyle = {
         fontSize: '1.5vw'
-    }
+    };
 
     export const titleStyleTop = {
         width: '30vw',
@@ -128,7 +128,7 @@ export default IsMobile
         borderTopRightRadius: '15px',
         borderTopLeftRadius: '15px',
         fontSize: '5vw'
-    }
+    };
 
     export const titleStyleBottom = {
         width: '30vw',
@@ -144,7 +144,7 @@ export default IsMobile
         borderBottomRightRadius: '15px',
         borderBottomLeftRadius: '15px',
         fontSize: '5vw'
-    }
+    };
 
     export const placeHolderStyles = {
         width: '45vw',
@@ -156,7 +156,7 @@ export default IsMobile
         borderRadius: '15px',
         fontWeight: 'bold',
         padding: '10px 20px'
-    }
+    };
 
     export const h1StyleTop = {
         width: '15vw',
@@ -170,7 +170,7 @@ export default IsMobile
         borderTopRightRadius: '15px',
         borderTopLeftRadius: '15px',
         fontSize: '2.5vw'
-    }
+    };
 
     export const h1StyleBottom = {
         width: '15vw',
@@ -186,12 +186,12 @@ export default IsMobile
         borderBottomRightRadius: '15px',
         borderBottomLeftRadius: '15px',
         fontSize: '2.5vw'
-    }
+    };
 
     // Mobile
     export const fontSizeStyleM = {
         fontSize: '5vw'
-    }
+    };
 
     export const titleStyleTopM = {
         width: '45vw',
@@ -205,7 +205,7 @@ export default IsMobile
         borderTopRightRadius: '15px',
         borderTopLeftRadius: '15px',
         fontSize: '15vw'
-    }
+    };
 
     export const titleStyleBottomM = {
         width: '45vw',
@@ -221,7 +221,7 @@ export default IsMobile
         borderBottomRightRadius: '15px',
         borderBottomLeftRadius: '15px',
         fontSize: '15vw'
-    }
+    };
 
 
     export const placeHolderStylesM = {
@@ -234,7 +234,7 @@ export default IsMobile
         borderRadius: '15px',
         fontWeight: 'bold',
         padding: '10px 20px'
-    }
+    };
 
     export const h1StyleTopM = {
         width: '55vw',
@@ -248,7 +248,7 @@ export default IsMobile
         borderTopRightRadius: '15px',
         borderTopLeftRadius: '15px',
         fontSize: '9vw'
-    }
+    };
 
     export const h1StyleBottomM = {
         width: '55vw',
@@ -264,7 +264,7 @@ export default IsMobile
         borderBottomRightRadius: '15px',
         borderBottomLeftRadius: '15px',
         fontSize: '9vw'
-    }
+    };
 
 // Miscellaneous
 export const resultStyles = {
@@ -277,23 +277,23 @@ export const resultStyles = {
     fontWeight: 'bold',
     padding: '10px 20px',
     listStyle: 'None'
-}
+};
 
 export const listStyles = {
     listStyle: 'None',
     alignItems: 'center',
-}
+};
 
 export const letteringStyle = {
     fontWeight: 'bold',
     fontSize: '20px',
-}
+};
 
 export const errorStyle = {
     color: 'red',
     fontWeight: 'bold',
     fontSize: '20px',
-}
+};
 
 export const spaceStyles = {
     display: 'flex',
@@ -301,7 +301,7 @@ export const spaceStyles = {
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center'
-}
+};
 
 export const uploadStyle = {
     fontWeight: 'bold',
@@ -310,4 +310,4 @@ export const uploadStyle = {
     borderColor: 'rgb(200, 215, 400)',
     backgroundColor: 'white',
     padding: '20px'
-}
+};

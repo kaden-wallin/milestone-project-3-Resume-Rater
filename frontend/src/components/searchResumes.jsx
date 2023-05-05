@@ -1,23 +1,23 @@
-import React, { useState } from 'react'
-import axios from 'axios'
-import { useNavigate } from "react-router-dom"
-import IsMobile, { 
-    letteringStyle,  
-    resultStyles, 
-    listStyles, 
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import IsMobile, {
+    letteringStyle,
+    resultStyles,
+    listStyles,
     buttonStyles2,
     buttonStyles2M,
     placeHolderStyles,
     placeHolderStylesM,
-    containerStyles 
-} from '../styles'
+    containerStyles
+} from '../styles';
 
 // As stated in the home component this is where the results are actually set to display and them I imported it to home
 function SearchResumes() {
-    const navigate = useNavigate()
-    const [searchTerm, setSearchTerm] = useState('')
-    const [searchResults, setSearchResults] = useState([])
-    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleSearch = async (event) => {
         event.preventDefault()
@@ -30,10 +30,10 @@ function SearchResumes() {
             console.error(`Fetch error: ${error}`)
             setLoading(false)
         }
-    }
+    };
 
 // These are the media query variables and function to set it
-    const isMobile = IsMobile()
+    const isMobile = IsMobile();
 
     const placeHolder = isMobile ? placeHolderStyles : placeHolderStylesM
     const button = isMobile ? buttonStyles2 : buttonStyles2M
@@ -42,8 +42,8 @@ function SearchResumes() {
     return (
         <div style={containerStyles}>
             <form onSubmit={handleSearch}>
-                <input style={placeHolder} placeholder="Find keywords in resumes" type="text" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
-                <button style={button} type="submit">Search</button>
+                <input style={placeHolder} placeholder='Find keywords in resumes' type='text' value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
+                <button style={button} type='submit'>Search</button>
             </form>
             {loading && <p style={letteringStyle}>Loading...</p>}
             {searchResults === undefined && <p style={letteringStyle}>No Matching resumes found</p>}
@@ -60,7 +60,7 @@ function SearchResumes() {
                 </ul>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default SearchResumes
+export default SearchResumes;

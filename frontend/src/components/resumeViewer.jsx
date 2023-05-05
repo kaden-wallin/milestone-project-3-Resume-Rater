@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import FileViewer from 'react-file-viewer'
-import CommentsAndRatings from './commentsAndRatings'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import FileViewer from 'react-file-viewer';
+import CommentsAndRatings from './commentsAndRatings';
+import axios from 'axios';
 import IsMobile, {
     spaceStyles,
     containerStyles2M,
@@ -16,26 +16,26 @@ import IsMobile, {
     h1StyleBottom,
     h1StyleBottomM,
     letteringStyle,
-} from '../styles'
+} from '../styles';
 
 // This is where the comments/ratings and resumes are loaded. 
 function ViewResume({ user }) {
-    const { resumeId } = useParams()
-    const [fileUrl, setFileUrl] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [fileType, setFileType] = useState('')
-    const [commentsAndRatings, setCommentsAndRatings] = useState([])
-    const navigate = useNavigate()
+    const { resumeId } = useParams();
+    const [fileUrl, setFileUrl] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [fileType, setFileType] = useState('');
+    const [commentsAndRatings, setCommentsAndRatings] = useState([]);
+    const navigate = useNavigate();
 
     const color = { color: 'rgb(47, 115, 182)' }
-    const isMobile = IsMobile()
+    const isMobile = IsMobile();
 
     const home = () => {
         navigate('/')
-    }
+    };
 
-    // These are the media query variables and function to set it
-    const isAuthenticated = user && localStorage.getItem("access_token")
+// These are the media query variables and function to set it
+    const isAuthenticated = user && localStorage.getItem('access_token')
 
     const styles = isMobile ? containerStyles2 : containerStyles2M
     const button = isMobile ? buttonStyles : buttonStylesM
@@ -54,7 +54,7 @@ function ViewResume({ user }) {
                 const bytes = new Uint8Array(binaryString.length)
                 for (let i = 0; i < binaryString.length; i++) {
                     bytes[i] = binaryString.charCodeAt(i)
-                }
+                };
                 const blob = new Blob([bytes], { type: 'application/octet-stream' })
                 const url = URL.createObjectURL(blob)
                 setFileUrl(url)
@@ -73,7 +73,7 @@ function ViewResume({ user }) {
                         break
                     default:
                         setFileType('')
-                }
+                };
                 const { comments, ratings, usernames } = responses[1].data
                 const commentsAndRatings = comments.map((comment, index) => ({
                     comment,
@@ -85,7 +85,7 @@ function ViewResume({ user }) {
             .catch((error) => {
                 console.error(`Fetch error: ${error}`)
             })
-    }, [resumeId])
+    }, [resumeId]);
 
     const CustomErrorComponent = ({ error }) => {
         const message = error && error.message ? error.message : 'Failed to load file'
@@ -106,7 +106,7 @@ function ViewResume({ user }) {
                                 errorComponent={CustomErrorComponent}
                             />
                         </div>
-                    )}
+                    )};
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     <div>
                         <CommentsAndRatings resumeId={resumeId} />
@@ -126,7 +126,7 @@ function ViewResume({ user }) {
                                 ))}
                                 <button style={button2} onClick={home}>Back</button>
                             </div>
-                        )}
+                        )};
                     </div>
                 </div>
             ) : (
@@ -140,7 +140,7 @@ function ViewResume({ user }) {
                                 errorComponent={CustomErrorComponent}
                             />
                         </div>
-                    )}
+                    )};
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     {commentsAndRatings.length === 0 ? (
                         <div>
@@ -158,11 +158,11 @@ function ViewResume({ user }) {
                             ))}
                             <button style={button2} onClick={home}>Back</button>
                         </div>
-                    )}
+                    )};
                 </div>
-            )}
+            )};
         </div>
-    )
-}
+    );
+};
 
-export default ViewResume
+export default ViewResume;

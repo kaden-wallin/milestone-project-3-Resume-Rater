@@ -13,12 +13,12 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Home user={user} setUser={setUser} />} />
-                <Route path="/login" element={<LoginForm setUser={setUser} />} />
-                <Route path="/register" element={<RegisterForm setUser={setUser} />} />
-                <Route path="/resume-uploader" element={<ResumeUploader user={user} />} />
-                <Route path="/resumes/:resumeId" element={<ViewResume user={user} />} />
-                <Route path="/resumes/search" elemt={<SearchResumes />} />
+                <Route path='/' element={<Home user={user} setUser={setUser} />} />
+                <Route path='/login' element={<LoginForm setUser={setUser} />} />
+                <Route path='/register' element={<RegisterForm setUser={setUser} />} />
+                <Route path='/resume-uploader' element={<ResumeUploader user={user} />} />
+                <Route path='/resumes/:resumeId' element={<ViewResume user={user} />} />
+                <Route path='/resumes/search' elemt={<SearchResumes />} />
             </Routes>
         </BrowserRouter>
     );
