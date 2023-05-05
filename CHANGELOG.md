@@ -368,3 +368,7 @@ Date:   Thu May 4 17:37:09 2023 -0600
 Date:   Thu May 4 17:50:46 2023 -0600
 
     forgot to add explaination for weird styling
+
+Date:   Thu May 4 20:28:57 2023 -0600
+
+    tried changing the code to be more consistent because me, tired me, and vscode code snippets don't code the same
