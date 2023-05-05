@@ -45,8 +45,8 @@ function CommentsAndRatings({ resumeId }) {
             .catch(error => {
                 console.error(error)
             })
-        navigate('/')
-    }
+        window.location.reload();
+    };
 
 // These are the media query variables and function to set it
     const isMobile = IsMobile();

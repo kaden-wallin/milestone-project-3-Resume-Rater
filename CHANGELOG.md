@@ -394,3 +394,7 @@ Date:   Fri May 5 01:59:05 2023 -0600
 Date:   Fri May 5 02:21:21 2023 -0600
 
     It isn't working so I am just gonna change it back. Maybe I'll try again after I sleep for a bit
+
+Date:   Fri May 5 02:26:54 2023 -0600
+
+    Just realized that the uploader page stopped working, pretty sure it's fixed though
