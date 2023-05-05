@@ -21,6 +21,7 @@ import IsMobile, {
 // This is where the comments/ratings and resumes are loaded. 
 function ViewResume({ user }) {
     const { resumeId } = useParams();
+    const [fileUrl, setFileUrl] = useState(null);
     const [loading, setLoading] = useState(true);
     const [fileType, setFileType] = useState('');
     const [commentsAndRatings, setCommentsAndRatings] = useState([]);
@@ -33,7 +34,7 @@ function ViewResume({ user }) {
         navigate('/')
     };
 
-    // These are the media query variables and function to set it
+// These are the media query variables and function to set it
     const isAuthenticated = user && localStorage.getItem('access_token')
 
     const styles = isMobile ? containerStyles2 : containerStyles2M
@@ -43,20 +44,35 @@ function ViewResume({ user }) {
     const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
 
     useEffect(() => {
-        axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
+            axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
             .then((resumeResponse) => {
-                const html = resumeResponse.data
-                const parser = new DOMParser();
-                const file = parser.parseFromString(html, 'text/html');
-                const iframe = file.querySelector('iframe');
-                iframe.src = iframe.dataset.src;
-                setFileType('resume');
+                const file = resumeResponse.data
+                const binaryString = window.atob(file.url.split(',')[1])
+                const bytes = new Uint8Array(binaryString.length)
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i)
+                };
+                const blob = new Blob([bytes], { type: 'application/octet-stream' })
+                const url = URL.createObjectURL(blob)
+                setFileUrl(url)
+                setLoading(false)
+                const extension = file.filename.split('.').pop().toLowerCase()
+                switch (extension) {
+                    case 'pdf':
+                        setFileType('pdf')
+                        break
+                    case 'doc':
+                    case 'docx':
+                        setFileType('docx')
+                        break
+                    case 'txt':
+                        setFileType('txt')
+                        break
+                    default:
+                        setFileType('')
+                };
+                return axios.get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
             })
-            .catch((error) => {
-                console.error(error)
-            });
-
-        axios.get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
             .then((commentsResponse) => {
                 const { comments, ratings, usernames } = commentsResponse.data
                 const commentsAndRatings = comments.map((comment, index) => ({
@@ -67,21 +83,31 @@ function ViewResume({ user }) {
                 setCommentsAndRatings(commentsAndRatings)
             })
             .catch((error) => {
-                console.error(error)
+                console.error(`Fetch error: ${error}`)
             })
     }, [resumeId]);
 
-    // This is certainly not the most effective way I could have implemented this conditional statment but it was like 2 or 3am and I didn't want to change it because I was proud it worked while I coded it that tired
+    const CustomErrorComponent = ({ error }) => {
+        const message = error && error.message ? error.message : 'Failed to load file'
+        return <div>{message}</div>
+    };
+
+// This is certainly not the most effective way I could have implemented this conditional statment but it was like 2 or 3am and I didn't want to change it because I was proud it worked while I coded it that tired
     return (
         <div style={styles}>
             {isAuthenticated ? (
                 <div>
                     {loading && <p style={letteringStyle}>Loading...</p>}
-                    {!loading && (
+                    {!loading && fileType && (
                         <div>
-                            <iframe title='Resume' width='100%' height='600px' src='' />
+                            <FileViewer
+                                fileType={fileType}
+                                filePath={fileUrl}
+                                errorComponent={CustomErrorComponent}
+                            />
                         </div>
                     )};
+                    {!loading && !fileType && <p>Unsupported file type</p>}
                     <div>
                         <CommentsAndRatings resumeId={resumeId} />
                         {commentsAndRatings.length === 0 ? (
@@ -106,11 +132,16 @@ function ViewResume({ user }) {
             ) : (
                 <div>
                     {loading && <p style={letteringStyle}>Loading...</p>}
-                    {!loading && (
+                    {!loading && fileType && (
                         <div>
-                            <iframe title='Resume' width='100%' height='600px' src='' />
+                            <FileViewer
+                                fileType={fileType}
+                                filePath={fileUrl}
+                                errorComponent={CustomErrorComponent}
+                            />
                         </div>
                     )};
+                    {!loading && !fileType && <p>Unsupported file type</p>}
                     {commentsAndRatings.length === 0 ? (
                         <div>
                             <p style={letteringStyle}>No comments or ratings to display</p>

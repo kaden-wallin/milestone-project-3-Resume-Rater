@@ -386,3 +386,11 @@ Date:   Fri May 5 00:29:23 2023 -0600
 Date:   Fri May 5 01:42:23 2023 -0600
 
     learned that the way I was sending the file data wasn't able to be secure so hopefully this new way works
+
+Date:   Fri May 5 01:59:05 2023 -0600
+
+    Im a big dummy, shouldn't be trying to code this late but I can't get to sleep until it is done
+
+Date:   Fri May 5 02:21:21 2023 -0600
+
+    It isn't working so I am just gonna change it back. Maybe I'll try again after I sleep for a bit
