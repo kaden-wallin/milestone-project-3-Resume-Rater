@@ -46,7 +46,7 @@
 
     Michael Kerr was the instructor for literally half of the courses including the React and Python courses which is where I learned what I used in this project
 
-    ChatGPT was a big help if finding libraries for my use cases and helping me decipher errors.
+    ChatGPT was a big help in finding libraries for my use cases and helping me with errors.
 
     I was able to save up enough money to be able to quit my job and do this program. That really helped me be able to get this project done and I truly believe I wouldn't have been able to otherwise.
 
