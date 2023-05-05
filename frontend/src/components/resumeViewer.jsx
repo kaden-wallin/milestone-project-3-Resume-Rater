@@ -44,10 +44,7 @@ function ViewResume({ user }) {
     const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
 
     useEffect(() => {
-        Promise.all([
-            axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`),
-            axios.get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
-        ])
+            axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
             .then((responses) => {
                 const file = responses[0].data
                 const binaryString = window.atob(file.url.split(',')[1])
@@ -74,6 +71,9 @@ function ViewResume({ user }) {
                     default:
                         setFileType('')
                 };
+                return axios.get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
+            })
+            .then((commentsResponse) => {
                 const { comments, ratings, usernames } = responses[1].data
                 const commentsAndRatings = comments.map((comment, index) => ({
                     comment,
