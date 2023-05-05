@@ -21,7 +21,6 @@ import IsMobile, {
 // This is where the comments/ratings and resumes are loaded. 
 function ViewResume({ user }) {
     const { resumeId } = useParams();
-    const [fileUrl, setFileUrl] = useState(null);
     const [loading, setLoading] = useState(true);
     const [fileType, setFileType] = useState('');
     const [commentsAndRatings, setCommentsAndRatings] = useState([]);
@@ -54,8 +53,7 @@ function ViewResume({ user }) {
                 setFileType('resume');
             })
             .catch((error) => {
-                console.error(`Fetch error: ${error}`)
-                setError(error);
+                console.error(error)
             });
 
         axios.get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
@@ -69,15 +67,9 @@ function ViewResume({ user }) {
                 setCommentsAndRatings(commentsAndRatings)
             })
             .catch((error) => {
-                console.error(`Fetch error: ${error}`)
+                console.error(error)
             })
     }, [resumeId]);
-
-    const CustomErrorComponent = ({ error }) => {
-        const message = error && error.message ? error.message : 'Failed to load file'
-        return <div>{message}</div>
-    };
-
 
     // This is certainly not the most effective way I could have implemented this conditional statment but it was like 2 or 3am and I didn't want to change it because I was proud it worked while I coded it that tired
     return (
