@@ -81,7 +81,7 @@ const ResumeUploader = () => {
 						{errorMessage && <p style={errorStyle}>{errorMessage}</p>}
 						{file && <p style={letteringStyle} >Selected file: {file.name}</p>}
 					</div>
-				)};
+				)}
 			</Dropzone>
 			<button style={button} type='submit' disabled={!file}>
 				Upload Resume
