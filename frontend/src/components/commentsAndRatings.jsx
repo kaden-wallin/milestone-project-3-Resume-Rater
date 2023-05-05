@@ -45,7 +45,7 @@ function CommentsAndRatings({ resumeId }) {
             .catch(error => {
                 console.error(error)
             })
-        navigate(`/resumes/${resumeId}`)
+        navigate('/')       
     };
 
 // These are the media query variables and function to set it
