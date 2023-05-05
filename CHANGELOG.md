@@ -365,10 +365,24 @@ Date:   Thu May 4 17:37:09 2023 -0600
 
     oops, forgot to change the most recent commit so it's accurate
 
-Date:   Thu May 4 17:50:46 2023 -0600
+Date:   Thu May 4 17:50:22 2023 -0600
 
     forgot to add explaination for weird styling
 
-Date:   Thu May 4 20:28:57 2023 -0600
+Date:   Thu May 4 20:29:03 2023 -0600
 
     tried changing the code to be more consistent because me, tired me, and vscode code snippets don't code the same
+
+Date:   Fri May 5 00:24:45 2023 -0600
+
+    Update resumeViewer.jsx
+
+    Hopefully that works, I am trying attempting to make the comment request start only after the resume request finishes
+
+Date:   Fri May 5 00:29:23 2023 -0600
+
+    got annoying to try and do it from github so I decided to finish my hopefully fix in vscode
+
+Date:   Fri May 5 01:42:23 2023 -0600
+
+    learned that the way I was sending the file data wasn't able to be secure so hopefully this new way works

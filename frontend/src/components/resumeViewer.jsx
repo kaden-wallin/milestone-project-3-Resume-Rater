@@ -34,7 +34,7 @@ function ViewResume({ user }) {
         navigate('/')
     };
 
-// These are the media query variables and function to set it
+    // These are the media query variables and function to set it
     const isAuthenticated = user && localStorage.getItem('access_token')
 
     const styles = isMobile ? containerStyles2 : containerStyles2M
@@ -44,35 +44,21 @@ function ViewResume({ user }) {
     const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
 
     useEffect(() => {
-            axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
+        axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
             .then((resumeResponse) => {
-                const file = resumeResponse.data
-                const binaryString = window.atob(file.url.split(',')[1])
-                const bytes = new Uint8Array(binaryString.length)
-                for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i)
-                };
-                const blob = new Blob([bytes], { type: 'application/octet-stream' })
-                const url = URL.createObjectURL(blob)
-                setFileUrl(url)
-                setLoading(false)
-                const extension = file.filename.split('.').pop().toLowerCase()
-                switch (extension) {
-                    case 'pdf':
-                        setFileType('pdf')
-                        break
-                    case 'doc':
-                    case 'docx':
-                        setFileType('docx')
-                        break
-                    case 'txt':
-                        setFileType('txt')
-                        break
-                    default:
-                        setFileType('')
-                };
-                return axios.get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
+                const html = resumeResponse.data
+                const parser = new DOMParser();
+                const file = parser.parseFromString(html, 'text/html');
+                const iframe = file.querySelector('iframe');
+                iframe.src = iframe.dataset.src;
+                setFileType('resume');
             })
+            .catch((error) => {
+                console.error(`Fetch error: ${error}`)
+                setError(error);
+            });
+
+        axios.get(`https://rottenresumes.pythonanywhere.com/api/comments-and-ratings/${resumeId}`)
             .then((commentsResponse) => {
                 const { comments, ratings, usernames } = commentsResponse.data
                 const commentsAndRatings = comments.map((comment, index) => ({
@@ -92,22 +78,18 @@ function ViewResume({ user }) {
         return <div>{message}</div>
     };
 
-// This is certainly not the most effective way I could have implemented this conditional statment but it was like 2 or 3am and I didn't want to change it because I was proud it worked while I coded it that tired
+
+    // This is certainly not the most effective way I could have implemented this conditional statment but it was like 2 or 3am and I didn't want to change it because I was proud it worked while I coded it that tired
     return (
         <div style={styles}>
             {isAuthenticated ? (
                 <div>
                     {loading && <p style={letteringStyle}>Loading...</p>}
-                    {!loading && fileType && (
+                    {!loading && (
                         <div>
-                            <FileViewer
-                                fileType={fileType}
-                                filePath={fileUrl}
-                                errorComponent={CustomErrorComponent}
-                            />
+                            <iframe title='Resume' width='100%' height='600px' src='' />
                         </div>
                     )};
-                    {!loading && !fileType && <p>Unsupported file type</p>}
                     <div>
                         <CommentsAndRatings resumeId={resumeId} />
                         {commentsAndRatings.length === 0 ? (
@@ -132,16 +114,11 @@ function ViewResume({ user }) {
             ) : (
                 <div>
                     {loading && <p style={letteringStyle}>Loading...</p>}
-                    {!loading && fileType && (
+                    {!loading && (
                         <div>
-                            <FileViewer
-                                fileType={fileType}
-                                filePath={fileUrl}
-                                errorComponent={CustomErrorComponent}
-                            />
+                            <iframe title='Resume' width='100%' height='600px' src='' />
                         </div>
                     )};
-                    {!loading && !fileType && <p>Unsupported file type</p>}
                     {commentsAndRatings.length === 0 ? (
                         <div>
                             <p style={letteringStyle}>No comments or ratings to display</p>
