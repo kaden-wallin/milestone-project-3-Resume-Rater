@@ -44,7 +44,7 @@ function ViewResume({ user }) {
     const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
 
     useEffect(() => {
-            axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
+            axios.get(`http://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
             .then((resumeResponse) => {
                 const file = resumeResponse.data
                 const binaryString = window.atob(file.url.split(',')[1])
@@ -106,7 +106,7 @@ function ViewResume({ user }) {
                                 errorComponent={CustomErrorComponent}
                             />
                         </div>
-                    )};
+                    )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     <div>
                         <CommentsAndRatings resumeId={resumeId} />
@@ -126,7 +126,7 @@ function ViewResume({ user }) {
                                 ))}
                                 <button style={button2} onClick={home}>Back</button>
                             </div>
-                        )};
+                        )}
                     </div>
                 </div>
             ) : (
@@ -140,7 +140,7 @@ function ViewResume({ user }) {
                                 errorComponent={CustomErrorComponent}
                             />
                         </div>
-                    )};
+                    )}
                     {!loading && !fileType && <p>Unsupported file type</p>}
                     {commentsAndRatings.length === 0 ? (
                         <div>
@@ -158,9 +158,9 @@ function ViewResume({ user }) {
                             ))}
                             <button style={button2} onClick={home}>Back</button>
                         </div>
-                    )};
+                    )}
                 </div>
-            )};
+            )}
         </div>
     );
 };
