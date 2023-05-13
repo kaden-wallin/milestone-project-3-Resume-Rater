@@ -44,7 +44,7 @@ function ViewResume({ user }) {
     const h1Bottom = isMobile ? h1StyleBottom : h1StyleBottomM
 
     useEffect(() => {
-            axios.get(`http://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
+            axios.get(`https://rottenresumes.pythonanywhere.com/api/download-resume/${resumeId}`)
             .then((resumeResponse) => {
                 const file = resumeResponse.data
                 const binaryString = window.atob(file.url.split(',')[1])
